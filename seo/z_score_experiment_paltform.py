@@ -36,16 +36,16 @@ if __name__ == "__main__":
     #                                          "C:/study/simulation_z_data/test_scores_trec_format/SVM/")
     f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file)
 
-    max_dist = 0.001
+    max_dist = 0.05
     for i in range(iterations):
         ag = d.winner_reference_point("A",max_dist)
-        gg = d.winner_reference_point("B", max_dist+0.001)
-        bg = d.winner_reference_point("C", max_dist+0.002)
-        ff = d.winner_reference_point("D", max_dist+0.003)
+        gg = d.winner_reference_point("B", max_dist+0.05)
+        bg = d.winner_reference_point("C", max_dist+0.1)
+        ff = d.winner_reference_point("D", max_dist+0.15)
         g_input = [ag, bg, gg, ff]
         results = pool.map(f, g_input)
         plot = pm.plot_maker()
         if not os.path.exists(str(max_dist)):
             os.makedirs(str(max_dist))
         plot.create_relvant_plots(results,str(max_dist),max_dist)
-        max_dist+=0.004
+        max_dist+=0.2
