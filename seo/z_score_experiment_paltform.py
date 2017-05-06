@@ -1,14 +1,15 @@
+import query_to_fold as qtf
 
-from seo import query_to_fold as qtf
+import winner_refrence_point as d
 
-from seo import winner_refrence_point as d
-
-from seo import competition_maker_winner_reference as cm
+import competition_maker_winner_reference as cm
 from multiprocessing import Pool as p
 from functools import partial
 import sys
 import plot_maker as pm
 import os
+
+
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,budget_creator):
 
     c = cm.competition_maker_winner_reference(8, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
