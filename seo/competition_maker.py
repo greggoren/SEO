@@ -1,11 +1,10 @@
-from seo import knapsack_algorithm as ka
+import knapsack_algorithm as ka
 from copy import deepcopy
 from scipy.stats import kendalltau as kt
-from seo import competition_stats_handler as gbcc
+import competition_stats_handler as gbcc
 import math
 import cPickle as cp
-import matplotlib.pyplot as plt
-import time
+
 class competition_maker:
 
     def __init__(self,num_of_iterations,budget_creator,score_file,number_of_competitors,data_set_location,fraction,chosen_models,query_per_fold):
