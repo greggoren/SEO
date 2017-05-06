@@ -11,25 +11,29 @@ import plot_maker as pm
 import os
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,budget_creator):
 
-    c = cm.competition_maker_winner_reference(12, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
+    c = cm.competition_maker_winner_reference(8, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
     return c.competition(budget_creator.model)
 
 
 if __name__ == "__main__":
     iterations = int(sys.argv[1])
-    data_set_location = "C:/study/letor_fixed2"
+    #data_set_location = "C:/study/letor_fixed2"
+    data_set_location = "/lv_local/home/sgregory/letor_fixed2"
     q = qtf.qtf(data_set_location)
     q.create_query_to_fold_index()
 
-    score_file = "C:/study/simulation_z_data/test_scores_trec_format/SVM/final_score_combined.txt"
+    #score_file = "C:/study/simulation_z_data/test_scores_trec_format/SVM/final_score_combined.txt"
+    score_file = "/lv_local/home/sgregory/LTOR2/test_scores_trec_format/SVM/final_score_combined.txt"
 
     pool = p(2)
 
 
 
     lg = d.winner_reference_point("002", 0.02)
-    chosen_models = lg.recover_models_per_fold("C:/study/simulation_z_data/models/SVM",
-                                               "C:/study/simulation_z_data/test_scores_trec_format/SVM/")
+    chosen_models = lg.recover_models_per_fold("/lv_local/home/sgregory/LTOR2/models/SVM",
+                                               "/lv_local/home/sgregory/LTOR2/test_scores_trec_format/SVM/")
+    #chosen_models = lg.recover_models_per_fold("C:/study/simulation_z_data/models/SVM",
+    #                                          "C:/study/simulation_z_data/test_scores_trec_format/SVM/")
     f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file)
 
     max_dist = 0.001
