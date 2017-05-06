@@ -38,10 +38,10 @@ if __name__ == "__main__":
         gg = d.winner_reference_point("B", max_dist+0.001)
         bg = d.winner_reference_point("C", max_dist+0.002)
         ff = d.winner_reference_point("D", max_dist+0.003)
-        max_dist+=0.004
-        g_input = [ag, bg, lg, ff]
+        g_input = [ag, bg, gg, ff]
         results = pool.map(f, g_input)
         plot = pm.plot_maker()
         if not os.path.exists(str(max_dist)):
             os.makedirs(str(max_dist))
         plot.create_relvant_plots(results,str(max_dist),max_dist)
+        max_dist+=0.004
