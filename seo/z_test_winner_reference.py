@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
 
     lg = d.winner_reference_point("002", 0.02)
-    gg = d.winner_reference_point("001", 0.1)
+    gg = d.winner_reference_point("001", 0.01)
     bg = d.winner_reference_point("0005", 0.05)
     ff = d.winner_reference_point("0008", 0.005)
 

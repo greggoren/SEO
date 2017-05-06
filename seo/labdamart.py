@@ -16,5 +16,5 @@ if __name__=="__main__":
     q = qtf.qtf(data_set_location)
     q.create_query_to_fold_index()
     l = lfc.letor_folds_creator(data_set_location,new_data_set_location,True)
-    c = cv.cross_validator(5,l,"LTOR_MART")
+    c = cv.cross_validator(5,l,"LTOR_MART_min_max")
     c.k_fold_cross_validation("LAMBDAMART",qrel_path)
