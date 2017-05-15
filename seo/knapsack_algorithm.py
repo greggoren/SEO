@@ -16,6 +16,9 @@ class knapsack:
 
         denominator = self.square_rooted(x) * self.square_rooted(y)
         return 1 - numerator / float(denominator)
+        """dist = [(a - b) ** 2 for a, b in zip(x, y)]
+        dist = sqrt(sum(dist))
+        return dist"""
 
     def pack(self,original_vector,competitor_features,first_competitor_features):
         sorted_items = sorted(((value/amount, amount, name)

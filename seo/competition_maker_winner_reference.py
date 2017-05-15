@@ -32,3 +32,14 @@ class competition_maker_winner_reference(cm.competition_maker):
                 denominator+=1
         print "sum of number of features ",sum_of_number_of_features
         return features_to_change ,float(sum_of_number_of_features)/denominator
+
+    def update_competitors(self,features_to_change,competitors_features,value_for_change):
+        for query in competitors_features:
+            for doc in competitors_features[query]:
+                features = competitors_features[query][doc]
+                length = len(features)
+                for index in range(length):
+                    if features_to_change.get(query, False):
+                        if index in features_to_change[query][doc]:
+                            competitors_features[query][doc][index]=value_for_change[query][index]
+        return competitors_features

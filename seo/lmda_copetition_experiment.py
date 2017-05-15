@@ -1,37 +1,39 @@
 
-from seo import query_to_fold as qtf
+import query_to_fold as qtf
 
-from seo import winner_refrence_point as d
+import lambdamart_file_handler as d
 
-from seo import competition_maker_winner_reference as cm
+import lbda_competition_maker as cm
 from multiprocessing import Pool as p
 from functools import partial
 import matplotlib.pyplot as plt
-def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,budget_creator):
+def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,c_d_loc,new_scores_path,models_path,budget_creator):
 
-    c = cm.competition_maker_winner_reference(12, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
+    c = cm.competition_maker(12, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc,new_scores_path,models_path)
     return c.competition(budget_creator.model)
 
 
 if __name__ == "__main__":
 
-    data_set_location = "C:/study/letor_fixed2"
+    data_set_location = "/lv_local/home/sgregory/letor_fixed2"
+    #data_set_location = "C:/study/letor_fixed2"
     q = qtf.qtf(data_set_location)
     q.create_query_to_fold_index()
 
-    score_file = "C:/study/simulation_z_data/test_scores_trec_format/SVM/final_score_combined.txt"
+    score_file = "/lv_local/home/sgregory/LTOR_MART/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
+    #score_file = "C:/study/simulation_z_data/test_scores_trec_format/SVM/final_score_combined.txt"
 
     pool = p(2)
 
 
-    lg = d.winner_reference_point("002", 0.1)
-    gg = d.winner_reference_point("001", 0.4)
-    bg = d.winner_reference_point("0005", 0.5)
-    ff = d.winner_reference_point("0008", 0.7)
+    lg = d.lambda_mart_stats_handler("002", 0.1)
+    gg = d.lambda_mart_stats_handler("001", 0.4)
+    bg = d.lambda_mart_stats_handler("0005", 0.5)
+    ff = d.lambda_mart_stats_handler("0008", 0.7)
 
-    chosen_models = lg.recover_models_per_fold("C:/study/simulation_z_data/models/SVM",
-                                               "C:/study/simulation_z_data/test_scores_trec_format/SVM/")
-    f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file)
+    chosen_models = lg.recover_models_per_fold("/lv_local/home/sgregory/LTOR_MART/models/LAMBDAMART",
+                                               "/lv_local/home/sgregory/LTOR_MART/test_scores_trec_format/LAMBDAMART/")
+    f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file,"/lv_local/home/sgregory/LTOR_MART/competition","/lv_local/home/sgregory/LTOR_MART/new_scores/","/lv_local/home/sgregory/LTOR_MART/models/LAMBDAMART/")
 
     g_input = [gg, bg, lg, ff]
     results = pool.map(f, g_input)

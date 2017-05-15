@@ -26,7 +26,7 @@ class plot_maker:
                 ax.plot(kendal_stats[0], kendal_stats[1], 'k')
             else:
                 ax.plot(kendal_stats[0], kendal_stats[1], 'b')
-        plt.savefig("kendall_tau.jpg")
+        plt.savefig(location+"/kendall_tau.jpg")
         plt.clf()
         fig = plt.figure()
         fig.suptitle('Average winner changing', fontsize=14, fontweight='bold')
@@ -91,7 +91,7 @@ class plot_maker:
                 ax.plot(orig_stats[0], orig_stats[1], 'k')
             else:
                 ax.plot(orig_stats[0], orig_stats[1], 'b')
-        plt.savefig("orig_tau.jpg")
+        plt.savefig(location+"/orig_tau.jpg")
         plt.clf()
         fig = plt.figure()
         fig.suptitle('Average original winner rank', fontsize=14, fontweight='bold')

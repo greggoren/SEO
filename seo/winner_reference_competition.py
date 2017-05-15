@@ -24,10 +24,10 @@ if __name__ == "__main__":
     pool = p(2)
 
 
-    lg = d.winner_reference_point("002", 0.02)
-    gg = d.winner_reference_point("001", 0.1)
-    bg = d.winner_reference_point("0005", 0.05)
-    ff = d.winner_reference_point("0008", 0.005)
+    lg = d.winner_reference_point("008", 0.08)
+    gg = d.winner_reference_point("0002", 0.002)
+    bg = d.winner_reference_point("005", 0.05)
+    ff = d.winner_reference_point("0005", 0.005)
 
     chosen_models = lg.recover_models_per_fold("C:/study/simulation_data/models/SVM",
                                                "C:/study/simulation_data/test_scores_trec_format/SVM/")
@@ -47,13 +47,13 @@ if __name__ == "__main__":
         key = result.keys()[0]
         print result
         kendal_stats = result[key]["kendall"]
-        if key == "001":
+        if key == "0002":
             ax.plot(kendal_stats[0], kendal_stats[1], 'g')
-        elif key == "002":
+        elif key == "008":
             ax.plot(kendal_stats[0], kendal_stats[1], 'r')
         elif key == "003":
             ax.plot(kendal_stats[0], kendal_stats[1], 'y')
-        elif key == "0005":
+        elif key == "005":
             ax.plot(kendal_stats[0], kendal_stats[1], 'k')
         else:
             ax.plot(kendal_stats[0], kendal_stats[1], 'b')
@@ -69,13 +69,13 @@ if __name__ == "__main__":
         key = result.keys()[0]
 
         winner_stats = result[key]["winner"]
-        if key == "001":
+        if key == "0002":
             ax.plot(winner_stats[0], winner_stats[1], 'g')
-        elif key == "002":
+        elif key == "008":
             ax.plot(winner_stats[0], winner_stats[1], 'r')
         elif key == "003":
             ax.plot(winner_stats[0], winner_stats[1], 'y')
-        elif key == "0005":
+        elif key == "005":
             ax.plot(winner_stats[0], winner_stats[1], 'k')
         else:
             ax.plot(winner_stats[0], winner_stats[1], 'b')
@@ -90,13 +90,13 @@ if __name__ == "__main__":
     for result in results:
         key = result.keys()[0]
         cos_stats = result[key]["cos"]
-        if key == "001":
+        if key == "0002":
             ax.plot(cos_stats[0], cos_stats[1], 'g')
-        elif key == "002":
+        elif key == "008":
             ax.plot(cos_stats[0], cos_stats[1], 'r')
         elif key == "003":
             ax.plot(cos_stats[0], cos_stats[1], 'y')
-        elif key == "0005":
+        elif key == "005":
             ax.plot(cos_stats[0], cos_stats[1], 'k')
         else:
             ax.plot(cos_stats[0], cos_stats[1], 'b')
@@ -112,13 +112,13 @@ if __name__ == "__main__":
 
         key = result.keys()[0]
         orig_stats = result[key]["orig"]
-        if key == "001":
+        if key == "0002":
             ax.plot(orig_stats[0], orig_stats[1], 'g')
-        elif key == "002":
+        elif key == "008":
             ax.plot(orig_stats[0], orig_stats[1], 'r')
         elif key == "003":
             ax.plot(orig_stats[0], orig_stats[1], 'y')
-        elif key == "0005":
+        elif key == "005":
             ax.plot(orig_stats[0], orig_stats[1], 'k')
         else:
             ax.plot(orig_stats[0], orig_stats[1], 'b')
@@ -133,13 +133,13 @@ if __name__ == "__main__":
 
         key = result.keys()[0]
         orig_stats = result[key]["win_rank"]
-        if key == "001":
+        if key == "0002":
             ax.plot(orig_stats[0], orig_stats[1], 'g')
-        elif key == "002":
+        elif key == "008":
             ax.plot(orig_stats[0], orig_stats[1], 'r')
         elif key == "003":
             ax.plot(orig_stats[0], orig_stats[1], 'y')
-        elif key == "0005":
+        elif key == "005":
             ax.plot(orig_stats[0], orig_stats[1], 'k')
         else:
             ax.plot(orig_stats[0], orig_stats[1], 'b')
@@ -154,18 +154,14 @@ if __name__ == "__main__":
         key = result.keys()[0]
         plt.subplot(220 + plot_number)
         originl_winner_rank = result[key]["originalwinnerrank"]
-        if key == "001":
-            plt.title("0.1")
-            label = "0.1"
-        elif key == "002":
-            plt.title("0.02")
-            label = "0.02"
-        elif key == "0005":
+        if key == "0002":
+            plt.title("0.002")
+
+        elif key == "008":
+            plt.title("0.08")
+
+        elif key == "005":
             plt.title("0.05")
-            label = "0.05"
-        elif key == "003":
-            plt.title("0.03")
-            label = "0.03"
         else:
             plt.title("0.005")
             label = "0.005"
@@ -180,18 +176,13 @@ if __name__ == "__main__":
         key = result.keys()[0]
         plt.subplot(220 + plot_number)
         last_winner_rank = result[key]["whoisthewinner"]
-        if key == "001":
-            plt.title("0.1")
-            label = "0.1"
-        elif key == "002":
-            plt.title("0.02")
-            label = "0.02"
-        elif key == "0005":
+        if key == "0002":
+            plt.title("0.002")
+        elif key == "008":
+            plt.title("0.08")
+        elif key == "005":
             plt.title("0.05")
             label = "0.05"
-        elif key == "003":
-            plt.title("0.03")
-            label = "0.03"
         else:
             plt.title("0.005")
             label = "0.005"
@@ -207,13 +198,13 @@ if __name__ == "__main__":
     for result in results:
         key = result.keys()[0]
         cos_stats = result[key]["avg_f"]
-        if key == "001":
+        if key == "0002":
             ax.plot(cos_stats[0], cos_stats[1], 'g')
-        elif key == "002":
+        elif key == "008":
             ax.plot(cos_stats[0], cos_stats[1], 'r')
         elif key == "003":
             ax.plot(cos_stats[0], cos_stats[1], 'y')
-        elif key == "0005":
+        elif key == "005":
             ax.plot(cos_stats[0], cos_stats[1], 'k')
         else:
             ax.plot(cos_stats[0], cos_stats[1], 'b')

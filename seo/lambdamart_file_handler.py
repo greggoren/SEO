@@ -1,8 +1,8 @@
 import competition_stats_handler as csh
 import os
 import subprocess
-from model_running import cross_validator as cv
-from model_running import evaluator as ev
+import SEO1.model_running.cross_validator as cv
+from SEO1.model_running import evaluator as ev
 class lambda_mart_stats_handler(csh.competition_stats_handler):
 
     def __init__(self,model,max_distance,cross_validator,evaluator):
@@ -35,16 +35,39 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
 
     def run_models(self,chosen_models,new_scores_path,data_set_location,models_path,final_scores_directory):
         score_files = []
+        foramted_score_files = []
+        final_score_file=final_scores_directory+"/final_competition_score.txt"
         for fold in chosen_models:
             model = models_path+"/"+chosen_models[fold]
             competition_file = data_set_location+"/"+fold+"/test.txt"
             score_files.append(self.cross_validator.run_model_lmbda_mart(model, competition_file, new_scores_path))
         for file in score_files:
-            self.evaluator.create_file_in_trec_eval_format(file,final_scores_directory,'RANKLIB')
+            foramted_score_files.append(self.evaluator.create_file_in_trec_eval_format(file,final_scores_directory,'RANKLIB'))
+        out = open(final_score_file,'a')
+        for file in foramted_score_files:
+            with open(file) as score_file:
+                for score in score_file:
+                    out.write(score)
+        out.close()
+        return final_score_file
 
-    def retrieve_new_ranking(self,final_score_directory):
-        ""
+        #TODO : create unified score file
 
+    def retrieve_new_ranking(self,final_score_file):
+        scores = {}
+        with open(final_score_file) as score_file:
+            for score in score_file:
+                splits = score.split()
+                if not scores.get(splits[0],False):
+                    scores[splits[0]]=[]
+                scores[splits[0]].append(splits[2])
+        return scores
+
+    def create_items_for_knapsack(self,competitors, document_feature_index):
+        value_for_change = {}
+        for query in competitors:
+            value_for_change[query] = document_feature_index[query][competitors[query][0]]
+        return value_for_change
 
 
     def run_command(self, command):
