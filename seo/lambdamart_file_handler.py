@@ -49,10 +49,10 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
         final_score_file=final_scores_directory+"/final_competition_score.txt"
         for fold in chosen_models:
             if not os.path.exists(new_scores_path+"/"+fold):
-            	os.makedirs(new_scores_path+ "/" + fold)
-	    if not os.path.exists(final_scores_directory+"/"+fold):
+                os.makedirs(new_scores_path+ "/" + fold)
+            if not os.path.exists(final_scores_directory+"/"+fold):
                 os.makedirs(final_scores_directory+ "/" + fold)
-	    model = chosen_models[fold]
+            model = chosen_models[fold]
             competition_file = data_set_location+"/"+fold+"/test.txt"
             print "running on file",competition_file
             score_files.append(self.cross_validator.run_model_lmbda_mart(model, competition_file, new_scores_path+"/"+fold))
