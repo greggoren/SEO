@@ -57,6 +57,7 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
             print "running on file",competition_file
             score_files.append(self.cross_validator.run_model_lmbda_mart(model, competition_file, new_scores_path+"/"+fold))
         for file in score_files:
+            print "working on file ",file
             foramted_score_files.append(self.evaluator.create_file_in_trec_eval_format(file,final_scores_directory+"/"+fold,'RANKLIB'))
         out = open(final_score_file,'a')
         for file in foramted_score_files:
