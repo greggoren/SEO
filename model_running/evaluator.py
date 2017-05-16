@@ -38,6 +38,7 @@ class evaluator:
         sys.stdout.flush()
         with open(scores_file) as scores_data:
             row_number = 0
+            print "im here"
             for score_record in scores_data:
                 score = score_record.rstrip()
 
@@ -50,6 +51,7 @@ class evaluator:
 
                 trec_eval_formatted_file_before_sort_file.write(query_id+"\tQ0\t"+document_name+"\t"+str(row_number)+"\t"+str(score)+"\tindri\n")
                 row_number += 1
+        print "im here"
         trec_eval_formatted_file_before_sort_file.close()
         command = "sort -k1,1 -k5nr  "+trec_eval_formatted_file_before_sort+" > "+trec_eval_formatted_file_final
         for output_line in self.run_command(command):
