@@ -33,6 +33,9 @@ class evaluator:
         trec_eval_formatted_file_before_sort = final_scores_directory+"/"+scores_file_name_temp
         trec_eval_formatted_file_before_sort_file = open(trec_eval_formatted_file_before_sort,'w')
         trec_eval_formatted_file_final =  final_scores_directory+"/"+scores_file_name
+        print "this is the trec file before sort = ",trec_eval_formatted_file_before_sort
+        print "this is the final trec file = ",trec_eval_formatted_file_final
+        sys.stdout.flush()
         with open(scores_file) as scores_data:
             row_number = 0
             for score_record in scores_data:
@@ -53,6 +56,13 @@ class evaluator:
                 print(output_line)
             if os.path.exists(trec_eval_formatted_file_before_sort):
                 os.remove(trec_eval_formatted_file_before_sort)
+            else:
+                print "file ",trec_eval_formatted_file_before_sort," doesn't exist"
+            if os.path.exists(trec_eval_formatted_file_final):
+                print "final file exists",trec_eval_formatted_file_final
+            else:
+                print "problem with final file ",trec_eval_formatted_file_final
+            sys.stdout.flush()
         return trec_eval_formatted_file_final
 
 
