@@ -36,6 +36,7 @@ class evaluator:
         print "this is the trec file before sort = ",trec_eval_formatted_file_before_sort
         print "this is the final trec file = ",trec_eval_formatted_file_final
         sys.stdout.flush()
+        sys.stderr.flush()
         with open(scores_file) as scores_data:
             row_number = 0
             print "im here"
@@ -65,6 +66,7 @@ class evaluator:
         else:
             print "problem with final file ",trec_eval_formatted_file_final
         sys.stdout.flush()
+        sys.stderr.flush()
         return trec_eval_formatted_file_final
 
 
