@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from numpy import hstack
 from numpy import matrix
 import pandas as pd
-
+import random
 def xml2df(xml_doc):
     f = open(xml_doc, 'r')
     soup = BeautifulSoup(f,"lxml")
@@ -54,5 +54,10 @@ def xml2df(xml_doc):
 
 
 if __name__=="__main__":
-    gini = g.gini()
-    gini.parse_file("C:/study/simulation_data/test/model_500_5.txt.txt")
+    #gini = g.gini()
+    a = range(1,137)
+    item = random.shuffle(a)
+    print item
+    print a
+
+    #gini.parse_file("C:/study/simulation_data/test/model_500_5.txt.txt")

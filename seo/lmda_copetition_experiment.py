@@ -1,16 +1,20 @@
+from functools import partial
+from multiprocessing import Pool as p
 
-import query_to_fold as qtf
+import matplotlib.pyplot as plt
 
 import lambdamart_file_handler as d
-
 import lbda_competition_maker as cm
-from multiprocessing import Pool as p
-from functools import partial
-import matplotlib.pyplot as plt
+import letor_fold_creator_z_normalize as lfc
+import query_to_fold as qtf
+from model_running import cross_validator as cv
+from model_running import evaluator as v
+
+
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,c_d_loc,new_scores_path,models_path,budget_creator):
 
-    c = cm.competition_maker(12, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc,new_scores_path,models_path)
-    return c.competition(budget_creator.model)
+    c = cm.competition_maker(1, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc,new_scores_path,models_path)
+    return c.competition("/lv_local/home/sgregory/LTOR_MART/new_scores/final")
 
 
 if __name__ == "__main__":
@@ -19,24 +23,22 @@ if __name__ == "__main__":
     #data_set_location = "C:/study/letor_fixed2"
     q = qtf.qtf(data_set_location)
     q.create_query_to_fold_index()
-
+    l = lfc.letor_folds_creator_z_normalize(data_set_location, data_set_location, True)
+    c = cv.cross_validator(5, l, "LTOR_MART_min_max")
     score_file = "/lv_local/home/sgregory/LTOR_MART/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
     #score_file = "C:/study/simulation_z_data/test_scores_trec_format/SVM/final_score_combined.txt"
-
+    eval = v.evaluator()
     pool = p(2)
 
+    gg = d.lambda_mart_stats_handler("001", 0.4,c,eval)#TODO - hide eval for inside use
 
-    lg = d.lambda_mart_stats_handler("002", 0.1)
-    gg = d.lambda_mart_stats_handler("001", 0.4)
-    bg = d.lambda_mart_stats_handler("0005", 0.5)
-    ff = d.lambda_mart_stats_handler("0008", 0.7)
 
-    chosen_models = lg.recover_models_per_fold("/lv_local/home/sgregory/LTOR_MART/models/LAMBDAMART",
+    chosen_models = gg.recover_models_per_fold("/lv_local/home/sgregory/LTOR_MART/models/LAMBDAMART",
                                                "/lv_local/home/sgregory/LTOR_MART/test_scores_trec_format/LAMBDAMART/")
     f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file,"/lv_local/home/sgregory/LTOR_MART/competition","/lv_local/home/sgregory/LTOR_MART/new_scores/","/lv_local/home/sgregory/LTOR_MART/models/LAMBDAMART/")
 
-    g_input = [gg, bg, lg, ff]
-    results = pool.map(f, g_input)
+    #g_input = [gg]
+    results = [simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART/competition","/lv_local/home/sgregory/LTOR_MART/new_scores/","/lv_local/home/sgregory/LTOR_MART/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
 
     fig = plt.figure()
     fig.suptitle('Average Kendall-tau measure', fontsize=14, fontweight='bold')

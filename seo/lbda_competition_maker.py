@@ -5,7 +5,7 @@ import competition_stats_handler as gbcc
 import math
 import cPickle as cp
 import random
-
+import sys
 
 class competition_maker:
 
@@ -22,17 +22,17 @@ class competition_maker:
         self.new_scores_path = new_scores_path
         self.models_path = models_path
 
-    def get_features_to_change(self,competitors,cost_index,values_for_change,competitor_features,original_features):
+    def get_features_to_change(self,competitors,items,values_for_change,competitor_features,original_features):
         features_to_change = {}
         denominator = 0
         sum_of_number_of_features = 0
-        for query in cost_index:
+        for query in competitors:
             features_to_change[query] = {}
+            reference_vec = values_for_change[query]
             for competitor in competitors[query]:
-                reference_vec = values_for_change[query][competitor]
                 current_features = competitor_features[query][competitor]
                 original_competitor = original_features[query][competitor]
-                items = cost_index[query][competitor]
+                #items = cost_index[query][competitor]
                 packer = ka.random_knapsack(items, self.lambdamart_stat_handler.max_distance)
                 features =[feature[0] for feature in packer.pack(original_competitor,current_features,reference_vec)]
                 features_to_change[query][competitor] = features
@@ -50,12 +50,14 @@ class competition_maker:
                 for index in range(length):
                     if features_to_change.get(query, False):
                         if index in features_to_change[query][doc]:
-                            competitors_features[query][doc][index]=value_for_change[query][doc][index]
+                            competitors_features[query][doc][index]=value_for_change[query][index]
         return competitors_features
 
     def competition(self,final_scores_directory):
+        sys.stdout.flush()
         results = {}
         competitors = self.lambdamart_stat_handler.get_competitors_for_query(self.score_file, self.number_of_competitors)
+        sys.stdout.flush()
         reference_of_indexes = cp.loads(cp.dumps(competitors,1))
         document_feature_index = self.lambdamart_stat_handler.index_features_for_competitors(competitors, self.data_set_location, True)
         original_vectors = cp.loads(cp.dumps(document_feature_index,-1))
@@ -70,13 +72,17 @@ class competition_maker:
         last_winner_original_rank = {}
         original_winner_final_rank = {}
         for iteration in range(0,self.num_of_iterations):
-
+            sys.stdout.flush()
             print "iteration number ",iteration+1
             sum_of_kendalltau = 0
             average_distance = self.lambdamart_stat_handler.create_budget_per_query(self.fraction, document_feature_index)
             value_for_change = self.lambdamart_stat_handler.create_items_for_knapsack(competitors, document_feature_index)
             print "getting features to change"
-            items = random.shuffle(range(1,137))#TODO: make more generic
+            sys.stdout.flush()
+            items = range(136)#TODO: make more generic
+            random.shuffle(items)
+            items = items[:50]
+            print items
             features_to_change ,avg_feature_num= self.get_features_to_change(competitors,items,value_for_change,document_feature_index,original_vectors)
             print "got features to change"
             average_feature_number.append(avg_feature_num)
@@ -84,8 +90,10 @@ class competition_maker:
             document_feature_index = self.update_competitors(features_to_change,cp.loads(cp.dumps(document_feature_index,-1)),value_for_change)
             print "update complete"
             print "getting new rankings"
+            sys.stdout.flush()
             competitors_new= self.get_new_rankings(document_feature_index,self.query_per_fold,final_scores_directory)
             print "finished new rankings"
+            sys.stdout.flush()
             number_of_time_winner_changed = 0
             denominator = 0
             sum_of_original_kt=0
@@ -154,8 +162,8 @@ class competition_maker:
                 if doc_scores[sorted_ranking[0]]==doc_scores[sorted_ranking[1]]:
                     ties+=1
             new_competitors[query] = sorted_ranking"""
-        self.lambdamart_stat_handler.rewrite_data_set(self,document_features,query_per_fold,self.competition_data_set_location)
-        final_score_file=self.lambdamart_stat_handler.run_models(self, self.chosen_models, self.new_scores_path, self.competition_data_set_location, self.models_path, final_scores_directory)
+        self.lambdamart_stat_handler.rewrite_data_set(document_features,query_per_fold,self.competition_data_set_location)
+        final_score_file=self.lambdamart_stat_handler.run_models(self.chosen_models, self.new_scores_path, self.competition_data_set_location, final_scores_directory)
         new_competitors=self.lambdamart_stat_handler.retrieve_new_ranking(final_score_file)
         return new_competitors
 
