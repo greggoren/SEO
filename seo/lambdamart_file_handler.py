@@ -37,7 +37,6 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
             for out_line in self.run_command(command):
                 print out_line
             print "preparing index of test for ",fold
-            self.evaluator.prepare_index_of_test_file(data_set_location + "/" + fold + "/test.txt")
             if os.path.exists(file_name):
                 os.remove(file_name)
 
@@ -55,9 +54,13 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
             model = chosen_models[fold]
             competition_file = data_set_location+"/"+fold+"/test.txt"
             print "running on file",competition_file
-            score_files.append(self.cross_validator.run_model_lmbda_mart(model, competition_file, new_scores_path+"/"+fold))
-        for file in score_files:
-            foramted_score_files.append(self.evaluator.create_file_in_trec_eval_format(file,final_scores_directory+"/"+fold,'RANKLIB'))
+            score_file = self.cross_validator.run_model_lmbda_mart(model, competition_file, new_scores_path+"/"+fold)
+            self.evaluator = ev.evaluator()
+            self.evaluator.prepare_index_of_test_file(competition_file)
+            foramted_score_files.append(self.evaluator.create_file_in_trec_eval_format(score_file, final_scores_directory + "/" + fold, 'RANKLIB'))
+
+        #for file in score_files:
+        #   foramted_score_files.append(self.evaluator.create_file_in_trec_eval_format(file,final_scores_directory+"/"+fold,'RANKLIB'))
         out = open(final_score_file,'a')
         for file in foramted_score_files:
             print "working on file ",file
