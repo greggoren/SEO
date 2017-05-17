@@ -59,8 +59,6 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
             self.evaluator.prepare_index_of_test_file(competition_file)
             foramted_score_files.append(self.evaluator.create_file_in_trec_eval_format(score_file, final_scores_directory + "/" + fold, 'RANKLIB'))
 
-        #for file in score_files:
-        #   foramted_score_files.append(self.evaluator.create_file_in_trec_eval_format(file,final_scores_directory+"/"+fold,'RANKLIB'))
         out = open(final_score_file,'a')
         for file in foramted_score_files:
             print "working on file ",file
@@ -70,16 +68,11 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
         out.close()
         return final_score_file
 
-        #TODO : create unified score file
-
     def retrieve_new_ranking(self,final_score_file):
         scores = {}
         with open(final_score_file) as score_file:
             for score in score_file:
                 splits = score.split()
-                if splits[2]== '29914_77':
-                    print "ok"
-                    sys.stdout.flush()
                 if not scores.get(int(splits[0]),False):
                     scores[int(splits[0])]=[]
                 scores[int(splits[0])].append(splits[2])
