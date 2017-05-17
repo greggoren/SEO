@@ -41,11 +41,12 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
                 os.remove(file_name)
 
     def run_models(self,chosen_models,new_scores_path,data_set_location,final_scores_directory):
-        score_files = []
         foramted_score_files = []
         if not os.path.exists(final_scores_directory):
             os.makedirs(final_scores_directory)
         final_score_file=final_scores_directory+"/final_competition_score.txt"
+        if os.path.exists(final_score_file):
+            os.remove(final_score_file)
         for fold in chosen_models:
             if not os.path.exists(new_scores_path+"/"+fold):
                 os.makedirs(new_scores_path+ "/" + fold)
@@ -55,7 +56,6 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
             competition_file = data_set_location+"/"+fold+"/test.txt"
             print "running on file",competition_file
             score_file = self.cross_validator.run_model_lmbda_mart(model, competition_file, new_scores_path+"/"+fold)
-            evaluator = ev.evaluator()
             query_doc_index = self.prepare_index_of_test_file(competition_file)
             foramted_score_files.append(self.create_file_in_trec_eval_format(score_file, final_scores_directory + "/" + fold, 'RANKLIB',query_doc_index))
 
@@ -113,13 +113,8 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
         trec_eval_formatted_file_before_sort = final_scores_directory+"/"+scores_file_name_temp
         trec_eval_formatted_file_before_sort_file = open(trec_eval_formatted_file_before_sort,'w')
         trec_eval_formatted_file_final =  final_scores_directory+"/"+scores_file_name
-        print "this is the trec file before sort = ",trec_eval_formatted_file_before_sort
-        print "this is the final trec file = ",trec_eval_formatted_file_final
-        sys.stdout.flush()
-        sys.stderr.flush()
         with open(scores_file) as scores_data:
             row_number = 0
-            print "im here"
             for score_record in scores_data:
                 score = score_record.rstrip()
 
@@ -132,19 +127,10 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
 
                 trec_eval_formatted_file_before_sort_file.write(query_id+"\tQ0\t"+document_name+"\t"+str(row_number)+"\t"+str(score)+"\tindri\n")
                 row_number += 1
-        print "im here"
         trec_eval_formatted_file_before_sort_file.close()
         command = "sort -k1,1 -k5nr  "+trec_eval_formatted_file_before_sort+" > "+trec_eval_formatted_file_final
         for output_line in self.run_command(command):
             print(output_line)
         if os.path.exists(trec_eval_formatted_file_before_sort):
             os.remove(trec_eval_formatted_file_before_sort)
-        else:
-            print "file ",trec_eval_formatted_file_before_sort," doesn't exist"
-        if os.path.exists(trec_eval_formatted_file_final):
-            print "final file exists",trec_eval_formatted_file_final
-        else:
-            print "problem with final file ",trec_eval_formatted_file_final
-        sys.stdout.flush()
-        sys.stderr.flush()
         return trec_eval_formatted_file_final

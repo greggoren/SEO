@@ -17,7 +17,7 @@ def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,c_
 
 
 if __name__ == "__main__":
-
+    plt.ioff()
     data_set_location = "/lv_local/home/sgregory/letor_fixed1"
     #data_set_location = "C:/study/letor_fixed2"
     q = qtf.qtf(data_set_location)
