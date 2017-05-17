@@ -36,7 +36,8 @@ if __name__ == "__main__":
 
     #g_input = [gg]
     results = [simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
-
+    print results[0]
+    """
     fig = plt.figure()
     fig.suptitle('Average Kendall-tau measure', fontsize=14, fontweight='bold')
     ax = fig.add_subplot(111)
@@ -219,4 +220,4 @@ if __name__ == "__main__":
         else:
             ax.plot(cos_stats[0], cos_stats[1], 'b')
     plt.savefig("number_of_features.jpg")
-    plt.clf()
+    plt.clf()"""
