@@ -56,8 +56,8 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
             print "running on file",competition_file
             score_file = self.cross_validator.run_model_lmbda_mart(model, competition_file, new_scores_path+"/"+fold)
             evaluator = ev.evaluator()
-            evaluator.prepare_index_of_test_file(competition_file)
-            foramted_score_files.append(evaluator.create_file_in_trec_eval_format(score_file, final_scores_directory + "/" + fold, 'RANKLIB'))
+            query_doc_index = self.prepare_index_of_test_file(competition_file)
+            foramted_score_files.append(self.create_file_in_trec_eval_format(score_file, final_scores_directory + "/" + fold, 'RANKLIB',query_doc_index))
 
         out = open(final_score_file,'a')
         for file in foramted_score_files:
@@ -91,3 +91,60 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
                              stderr=subprocess.STDOUT,
                              shell=True)
         return iter(p.stdout.readline, b'')
+
+    #Freaky code check ----------------------------------------------------------------------------------------------------
+    def prepare_index_of_test_file(self,test_file):
+        query_doc_index = {}
+        with open(test_file) as test_data:
+
+            row_number = 0
+            for data_record in test_data:
+                query_id = data_record.split(" ")[1].split(":")[1]
+                document_name = data_record.split("#")[1].rstrip()
+                if not query_doc_index.get(row_number,False):
+                    query_doc_index[row_number]={}
+                    query_doc_index[row_number][query_id]=document_name
+                row_number += 1
+        return query_doc_index
+
+    def create_file_in_trec_eval_format(self,scores_file,final_scores_directory,package,query_doc_index):
+        scores_file_name = os.path.basename(scores_file)
+        scores_file_name_temp = os.path.basename(scores_file).replace(".txt",".tmp")
+        trec_eval_formatted_file_before_sort = final_scores_directory+"/"+scores_file_name_temp
+        trec_eval_formatted_file_before_sort_file = open(trec_eval_formatted_file_before_sort,'w')
+        trec_eval_formatted_file_final =  final_scores_directory+"/"+scores_file_name
+        print "this is the trec file before sort = ",trec_eval_formatted_file_before_sort
+        print "this is the final trec file = ",trec_eval_formatted_file_final
+        sys.stdout.flush()
+        sys.stderr.flush()
+        with open(scores_file) as scores_data:
+            row_number = 0
+            print "im here"
+            for score_record in scores_data:
+                score = score_record.rstrip()
+
+                if package == 'RANKLIB':
+                    if "\t" in score:
+                        score = score.split("\t")[2]# for ranklib score files
+
+                query_id = query_doc_index[row_number].keys()[0]
+                document_name = query_doc_index[row_number][query_id]
+
+                trec_eval_formatted_file_before_sort_file.write(query_id+"\tQ0\t"+document_name+"\t"+str(row_number)+"\t"+str(score)+"\tindri\n")
+                row_number += 1
+        print "im here"
+        trec_eval_formatted_file_before_sort_file.close()
+        command = "sort -k1,1 -k5nr  "+trec_eval_formatted_file_before_sort+" > "+trec_eval_formatted_file_final
+        for output_line in self.run_command(command):
+            print(output_line)
+        if os.path.exists(trec_eval_formatted_file_before_sort):
+            os.remove(trec_eval_formatted_file_before_sort)
+        else:
+            print "file ",trec_eval_formatted_file_before_sort," doesn't exist"
+        if os.path.exists(trec_eval_formatted_file_final):
+            print "final file exists",trec_eval_formatted_file_final
+        else:
+            print "problem with final file ",trec_eval_formatted_file_final
+        sys.stdout.flush()
+        sys.stderr.flush()
+        return trec_eval_formatted_file_final

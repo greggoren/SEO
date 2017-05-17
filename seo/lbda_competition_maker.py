@@ -146,22 +146,6 @@ class competition_maker:
 
 
     def get_new_rankings(self,document_features,query_per_fold,final_scores_directory):
-
-
-        """for query in document_features:
-            doc_scores = {}
-            weights = model_weights[query_per_fold[query]]
-            original_rank = original_ranks[query]
-            for doc in document_features[query]:
-                doc_features = document_features[query][doc]
-                score = self.dot_product(doc_features, weights)
-                doc_scores[doc] = score
-
-            sorted_ranking = sorted(original_rank, key=lamnbda x:(doc_scores[x]), reverse=True)
-            if len(sorted_ranking)>1:
-                if doc_scores[sorted_ranking[0]]==doc_scores[sorted_ranking[1]]:
-                    ties+=1
-            new_competitors[query] = sorted_ranking"""
         self.lambdamart_file_handler.rewrite_data_set(document_features, query_per_fold, self.competition_data_set_location)
         final_score_file=self.lambdamart_file_handler.run_models(self.chosen_models, self.new_scores_path, self.competition_data_set_location, final_scores_directory)
         new_competitors=self.lambdamart_file_handler.retrieve_new_ranking(final_score_file)
