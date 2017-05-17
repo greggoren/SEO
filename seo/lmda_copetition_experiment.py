@@ -12,20 +12,18 @@ from model_running import cross_validator as cv
 
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,c_d_loc,new_scores_path,models_path,budget_creator):
 
-    c = cm.competition_maker(1, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc,new_scores_path,models_path)
+    c = cm.competition_maker(2, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc,new_scores_path,models_path)
     return c.competition("/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/final")
 
 
 if __name__ == "__main__":
     plt.ioff()
     data_set_location = "/lv_local/home/sgregory/letor_fixed1"
-    #data_set_location = "C:/study/letor_fixed2"
     q = qtf.qtf(data_set_location)
     q.create_query_to_fold_index()
     l = lfc.letor_folds_creator_z_normalize(data_set_location, data_set_location, True)
     c = cv.cross_validator(5, l, "LTOR_MART_min_max")
     score_file = "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
-    #score_file = "C:/study/simulation_z_data/test_scores_trec_format/SVM/final_score_combined.txt"
 
     pool = p(2)
 
