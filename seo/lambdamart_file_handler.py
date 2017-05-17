@@ -7,11 +7,11 @@ import sys
 #aaaaZ
 class lambda_mart_stats_handler(csh.competition_stats_handler):
 
-    def __init__(self,model,max_distance,cross_validator,evaluator):
+    def __init__(self,model,max_distance,cross_validator):
         self.model = model
         self.max_distance = max_distance
         self.cross_validator = cross_validator
-        self.evaluator = evaluator
+
 
     def activation_func(self,input):
         print ""

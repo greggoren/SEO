@@ -27,10 +27,10 @@ if __name__ == "__main__":
     c = cv.cross_validator(5, l, "LTOR_MART_min_max")
     score_file = "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
     #score_file = "C:/study/simulation_z_data/test_scores_trec_format/SVM/final_score_combined.txt"
-    eval = v.evaluator()
+
     pool = p(2)
 
-    gg = d.lambda_mart_stats_handler("001", 0.4,c,eval)#TODO - hide eval for inside use
+    gg = d.lambda_mart_stats_handler("004", 0.4,c)#TODO - hide eval for inside use
 
 
     chosen_models = gg.recover_models_per_fold("/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART",
