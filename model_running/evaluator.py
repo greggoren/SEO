@@ -28,7 +28,6 @@ class evaluator:
                 row_number += 1
 
     def create_file_in_trec_eval_format(self,scores_file,final_scores_directory,package):
-        raise Exception("pizdets al haets")
         scores_file_name = os.path.basename(scores_file)
         scores_file_name_temp = os.path.basename(scores_file).replace(".txt",".tmp")
         trec_eval_formatted_file_before_sort = final_scores_directory+"/"+scores_file_name_temp

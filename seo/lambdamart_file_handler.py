@@ -55,9 +55,9 @@ class lambda_mart_stats_handler(csh.competition_stats_handler):
             competition_file = data_set_location+"/"+fold+"/test.txt"
             print "running on file",competition_file
             score_file = self.cross_validator.run_model_lmbda_mart(model, competition_file, new_scores_path+"/"+fold)
-            self.evaluator = ev.evaluator()
-            self.evaluator.prepare_index_of_test_file(competition_file)
-            foramted_score_files.append(self.evaluator.create_file_in_trec_eval_format(score_file, final_scores_directory + "/" + fold, 'RANKLIB'))
+            evaluator = ev.evaluator()
+            evaluator.prepare_index_of_test_file(competition_file)
+            foramted_score_files.append(evaluator.create_file_in_trec_eval_format(score_file, final_scores_directory + "/" + fold, 'RANKLIB'))
 
         out = open(final_score_file,'a')
         for file in foramted_score_files:
