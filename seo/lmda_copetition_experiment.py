@@ -38,7 +38,7 @@ if __name__ == "__main__":
     f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file,"/lv_local/home/sgregory/LTOR_MART/competition","/lv_local/home/sgregory/LTOR_MART/new_scores/","/lv_local/home/sgregory/LTOR_MART/models/LAMBDAMART/")
 
     #g_input = [gg]
-    results = [simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART/new_scores","/lv_local/home/sgregory/LTOR_MART/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
+    results = [simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
 
     fig = plt.figure()
     fig.suptitle('Average Kendall-tau measure', fontsize=14, fontweight='bold')
