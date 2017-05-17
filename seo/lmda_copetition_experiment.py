@@ -8,7 +8,6 @@ import lbda_competition_maker as cm
 import letor_fold_creator_z_normalize as lfc
 import query_to_fold as qtf
 from model_running import cross_validator as cv
-from model_running import evaluator as v
 
 
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,c_d_loc,new_scores_path,models_path,budget_creator):
@@ -30,7 +29,7 @@ if __name__ == "__main__":
 
     pool = p(2)
 
-    gg = d.lambda_mart_stats_handler("004", 0.4,c)#TODO - hide eval for inside use
+    gg = d.lambda_mart_stats_handler("004", 0.4,c)
 
 
     chosen_models = gg.recover_models_per_fold("/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART",
