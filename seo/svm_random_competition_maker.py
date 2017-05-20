@@ -141,7 +141,7 @@ class competition_maker:
         results["originalwinnerrank"] = original_winner_final_rank
         results["avg_f"] = (x_axis, average_feature_number)
         meta_results = {}
-        meta_results[self.budget_creator.model] = results
+        meta_results[self.lambdamart_file_handler.model] = results
         return meta_results
 
 
