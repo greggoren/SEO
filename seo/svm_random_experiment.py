@@ -3,17 +3,17 @@ from multiprocessing import Pool as p
 import os
 import matplotlib.pyplot as plt
 
-import lambdamart_file_handler as d
-import lbda_competition_maker as cm
+import svm_random_file_handler as d
+import svm_random_competition_maker as cm
 import letor_fold_creator_z_normalize as lfc
 import query_to_fold as qtf
 from model_running import cross_validator as cv
 
 
-def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,c_d_loc,new_scores_path,models_path,budget_creator):
+def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,budget_creator):
 
-    c = cm.competition_maker(12, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc+"/"+budget_creator.model,new_scores_path+"/"+budget_creator.model,models_path)
-    return c.competition("/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/"+budget_creator.model+"/final")
+    c = cm.competition_maker(12, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
+    return c.competition("/lv_local/home/sgregory/LTOR1/new_scores/"+budget_creator.model+"/final")
 
 
 def write_res_to_file(result,model):
@@ -50,21 +50,20 @@ if __name__ == "__main__":
     q = qtf.qtf(data_set_location)
     q.create_query_to_fold_index()
     l = lfc.letor_folds_creator_z_normalize(data_set_location, data_set_location, True)
-    c = cv.cross_validator(5, l, "LTOR_MART_min_max")
-    score_file = "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
+    score_file = "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/final_score_combined.txt"
 
     pool = p(2)
 
-    gg = d.lambda_mart_stats_handler("01", 0.1,c)
-    aa = d.lambda_mart_stats_handler("005", 0.05,c)
-    bb = d.lambda_mart_stats_handler("001", 0.01, c)
+    gg = d.winner_reference_point_random("01", 0.1)
+    aa = d.winner_reference_point_random("005", 0.05)
+    bb = d.winner_reference_point_random("001", 0.01)
 
-    chosen_models = gg.recover_models_per_fold("/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART",
-                                               "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/")
-    f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/")
+    chosen_models = gg.recover_models_per_fold("/lv_local/home/sgregory/LTOR1/models/SVM",
+                                               "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/")
+    f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file)
 
     g_input = [gg,aa,bb]
     results = pool.map(f,g_input)#[simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
     for result in results:
-        write_res_to_file(result,"LAMDAMART")
+        write_res_to_file(result,"SVM")
 

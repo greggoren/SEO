@@ -31,7 +31,7 @@ class knapsack:
             index = name
             temp_vec[index] = first_competitor_features[index]
             if self.cosine_dist(temp_vec,original_vector)>self.MAXWT:
-                temp_vec[index]=original_vector[index]
+                temp_vec[index]=competitor_features[index]
                 continue
 
             bagged += [(name,)]

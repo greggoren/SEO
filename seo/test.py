@@ -4,8 +4,8 @@ from seo import exponential_budget_cost_creator as e
 
 from seo import query_to_fold as qtf
 
-from seo import competition_maker as cm
-from seo import distance_budget_cost_creator as d
+from seo import competition_maker_winner_reference as cm
+from seo import winner_refrence_point as d
 from seo import linear_budget_cost_creator as l
 from seo import logarithmic_budget_cost_creator as lb
 from multiprocessing import Pool as p
@@ -13,7 +13,7 @@ from functools import partial
 import matplotlib.pyplot as plt
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,budget_creator):
 
-    c = cm.competition_maker(6, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
+    c = cm.competition_maker_winner_reference(12, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
     return c.competition(budget_creator.model)
 
 
@@ -30,16 +30,14 @@ if __name__ == "__main__":
     """lg =lb.logarithmic_budget_cost_creator("log")#l.linear_budget_cost_creator(factor) #e.exponential_budget_cost_creator()##  # #
     e = e.exponential_budget_cost_creator("exp")
     li = l.linear_budget_cost_creator("linear")"""
-    lg = d.distance_budget_cost_creator("002", 0.02)
-    gg = d.distance_budget_cost_creator("001", 0.01)
-    bg = d.distance_budget_cost_creator("0005", 0.05)
-    ff = d.distance_budget_cost_creator("0008", 0.005)
+    lg = d.winner_reference_point("005", 0.05)
+    gg = d.winner_reference_point("001", 0.01)
     #fg = d.distance_budget_cost_creator("003", 0.03)
     chosen_models = lg.recover_models_per_fold("C:/study/simulation_data/models/SVM",
                                                "C:/study/simulation_data/test_scores_trec_format/SVM/")
     f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file)
 
-    g_input = [gg, bg, lg, ff]
+    g_input = [gg, lg ]
     results = pool.map(f, g_input)
 
     fig = plt.figure()
