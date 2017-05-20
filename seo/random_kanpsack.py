@@ -22,9 +22,11 @@ class random_knapsack:
         temp_vec = copy(competitor_features)
         for name in self.items:
             index = name
+            if first_competitor_features[index]==temp_vec[index]:
+                continue
             temp_vec[index] = first_competitor_features[index]
             if self.cosine_dist(temp_vec,original_vector)>self.MAXWT:
-                temp_vec[index]=original_vector[index]
+                temp_vec[index]=competitor_features[index]
                 continue
 
             bagged += [(name,)]
