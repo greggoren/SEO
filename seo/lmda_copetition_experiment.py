@@ -12,8 +12,8 @@ from model_running import cross_validator as cv
 
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,c_d_loc,new_scores_path,models_path,budget_creator):
 
-    c = cm.competition_maker(1, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc,new_scores_path,models_path)
-    return c.competition("/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/final")
+    c = cm.competition_maker(1, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc+"/"+budget_creator.model,new_scores_path+"/"+budget_creator.model,models_path)
+    return c.competition("/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/"+budget_creator.model+"/final")
 
 
 def write_res_to_file(result,model):
