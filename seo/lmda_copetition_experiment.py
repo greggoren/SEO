@@ -12,7 +12,7 @@ from model_running import cross_validator as cv
 
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,c_d_loc,new_scores_path,models_path,budget_creator):
 
-    c = cm.competition_maker(1, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc+"/"+budget_creator.model,new_scores_path+"/"+budget_creator.model,models_path)
+    c = cm.competition_maker(12, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc+"/"+budget_creator.model,new_scores_path+"/"+budget_creator.model,models_path)
     return c.competition("/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/"+budget_creator.model+"/final")
 
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/")
 
     g_input = [gg,aa]#,bb]
-    iterations = 2
+    iterations = 10
     final_results = {}
     for i in range(iterations):
         results = pool.map(f,g_input)#[simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
