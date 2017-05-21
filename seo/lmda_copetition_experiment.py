@@ -12,7 +12,7 @@ from model_running import cross_validator as cv
 
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,c_d_loc,new_scores_path,models_path,budget_creator):
 
-    c = cm.competition_maker(12, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc+"/"+budget_creator.model,new_scores_path+"/"+budget_creator.model,models_path)
+    c = cm.competition_maker(1, budget_creator,score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index,c_d_loc+"/"+budget_creator.model,new_scores_path+"/"+budget_creator.model,models_path)
     return c.competition("/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/"+budget_creator.model+"/final")
 
 
@@ -20,7 +20,6 @@ def write_res_to_file(result,model):
     for key in result:
         if not os.path.exists(model+"/"+key):
             os.makedirs(model+"/"+key)
-        key = result.keys()[0]
         for stat in result[key]:
 
             out_file = open(model+"/"+key + "/" + stat + ".txt", 'w')
@@ -37,15 +36,19 @@ def write_res_to_file(result,model):
                 print stat
             out_file.close()
 
-def sum_dictionaries(dict_a,dict_b):
-    result ={}
-    for key in dict_a:
-        for stat in  dict_a[key]:
-            if isinstance(dict_a[key][stat], tuple):
-                ""
+def sum_lists(list_a,list_b):
+    return [a + b for a,b in zip(list_a,list_b)]
+
+def average_list(list_a,iterations):
+    return [float(a)/iterations for a in list_a]
+
+def sum_dicts(x,y):
+    return {k: x.get(k, 0) + y.get(k, 0) for k in set(x) | set(y)}
+
+def average_dict(dict_a,iterations):
+    return {k: float(dict_a.get(k, 0))/iterations for k in set(dict_a)}
 
 if __name__ == "__main__":
-    plt.ioff()
     data_set_location = "/lv_local/home/sgregory/letor_fixed1"
     q = qtf.qtf(data_set_location)
     q.create_query_to_fold_index()
@@ -64,7 +67,31 @@ if __name__ == "__main__":
     f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/")
 
     g_input = [gg,aa,bb]
-    results = pool.map(f,g_input)#[simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
-    for result in results:
-        write_res_to_file(result,"LAMDAMART")
+    iterations = 2
+    final_results = {}
+    for i in range(iterations):
+        results = pool.map(f,g_input)#[simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
+        if not final_results:
+            for result in results:
+                final_results[result.keys()[0]]= result[result.keys()[0]]
+        else:
+            for result in results:
+                key = result.keys()[0]
+                for stat in result[key]:
+                    try:
+                        if isinstance(result[key][stat], tuple):
+                            final_results[key][stat][1]=sum_lists(final_results[key][stat][1],result[key][stat][1])
+                        else:
+                            final_results[key][stat]= sum_dicts(final_results[key][stat], result[key][stat])
+
+                    except:
+                        print result[key]
+                        print stat
+    for key in final_results:
+        for stat in final_results[key]:
+            if isinstance(final_results[key][stat], tuple):
+                final_results[key][stat][1] =average_list(final_results[key][stat][1],iterations)
+            else:
+                final_results[key][stat] = average_list(final_results[key][stat], iterations)
+    write_res_to_file(final_results,"LAMDAMART")
 
