@@ -80,7 +80,7 @@ if __name__ == "__main__":
                 for stat in result[key]:
                     try:
                         if isinstance(result[key][stat], tuple):
-                            final_results[key][stat][1]=sum_lists(final_results[key][stat][1],result[key][stat][1])
+                            final_results[key][stat]=(final_results[key][stat][0],sum_lists(final_results[key][stat][1],result[key][stat][1]))
                         else:
                             final_results[key][stat]= sum_dicts(final_results[key][stat], result[key][stat])
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     for key in final_results:
         for stat in final_results[key]:
             if isinstance(final_results[key][stat], tuple):
-                final_results[key][stat][1] =average_list(final_results[key][stat][1],iterations)
+                final_results[key][stat] =(final_results[key][stat][0],average_list(final_results[key][stat][1],iterations))
             else:
                 final_results[key][stat] = average_list(final_results[key][stat], iterations)
     write_res_to_file(final_results,"LAMDAMART")
