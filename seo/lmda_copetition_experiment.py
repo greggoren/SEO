@@ -92,6 +92,6 @@ if __name__ == "__main__":
             if isinstance(final_results[key][stat], tuple):
                 final_results[key][stat] =(final_results[key][stat][0],average_list(final_results[key][stat][1],iterations))
             else:
-                final_results[key][stat] = average_list(final_results[key][stat], iterations)
+                final_results[key][stat] = average_dict(final_results[key][stat], iterations)
     write_res_to_file(final_results,"LAMDAMART")
 
