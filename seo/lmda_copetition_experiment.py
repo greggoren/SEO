@@ -59,14 +59,14 @@ if __name__ == "__main__":
     pool = p(2)
 
     gg = d.lambda_mart_stats_handler("01", 0.1,c)
-    #aa = d.lambda_mart_stats_handler("005", 0.05,c)
+    aa = d.lambda_mart_stats_handler("005", 0.05,c)
     #bb = d.lambda_mart_stats_handler("001", 0.01, c)
 
     chosen_models = gg.recover_models_per_fold("/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART",
                                                "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/")
     f = partial(simulation, chosen_models, data_set_location, q.query_to_fold_index, score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/")
 
-    g_input = [gg]#,aa,bb]
+    g_input = [gg,aa]#,bb]
     iterations = 2
     final_results = {}
     for i in range(iterations):
