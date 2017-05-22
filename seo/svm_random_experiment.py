@@ -7,7 +7,6 @@ import svm_random_file_handler as d
 import svm_random_competition_maker as cm
 import letor_fold_creator_z_normalize as lfc
 import query_to_fold as qtf
-from model_running import cross_validator as cv
 
 
 def simulation(chosen_models,data_set_location,query_to_fold_index,score_file,budget_creator):
@@ -37,12 +36,18 @@ def write_res_to_file(result,model):
                 print stat
             out_file.close()
 
-def sum_dictionaries(dict_a,dict_b):
-    result ={}
-    for key in dict_a:
-        for stat in  dict_a[key]:
-            if isinstance(dict_a[key][stat], tuple):
-                ""
+def sum_lists(list_a,list_b):
+    return [a + b for a,b in zip(list_a,list_b)]
+
+def average_list(list_a,iterations):
+    return [float(a)/iterations for a in list_a]
+
+def sum_dicts(x,y):
+    return {k: x.get(k, 0) + y.get(k, 0) for k in set(x) | set(y)}
+
+def average_dict(dict_a,iterations):
+    return {k: float(dict_a.get(k, 0))/iterations for k in set(dict_a)}
+
 
 if __name__ == "__main__":
     plt.ioff()
@@ -64,6 +69,35 @@ if __name__ == "__main__":
 
     g_input = [gg,aa,bb]
     results = pool.map(f,g_input)#[simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
-    for result in results:
-        write_res_to_file(result,"SVM")
+    g_input = [gg, aa, bb]
+    iterations = 10
+    final_results = {}
+    for i in range(iterations):
+        results = pool.map(f,
+                           g_input)  # [simulation(chosen_models,data_set_location,q.query_to_fold_index,score_file,"/lv_local/home/sgregory/LTOR_MART_min_max/competition","/lv_local/home/sgregory/LTOR_MART_min_max/new_scores","/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",gg)]#pool.map(f, g_input)
+        if not final_results:
+            for result in results:
+                final_results[result.keys()[0]] = result[result.keys()[0]]
+        else:
+            for result in results:
+                key = result.keys()[0]
+                for stat in result[key]:
+                    try:
+                        if isinstance(result[key][stat], tuple):
+                            final_results[key][stat] = (
+                            final_results[key][stat][0], sum_lists(final_results[key][stat][1], result[key][stat][1]))
+                        else:
+                            final_results[key][stat] = sum_dicts(final_results[key][stat], result[key][stat])
+
+                    except:
+                        print result[key]
+                        print stat
+    for key in final_results:
+        for stat in final_results[key]:
+            if isinstance(final_results[key][stat], tuple):
+                final_results[key][stat] = (
+                final_results[key][stat][0], average_list(final_results[key][stat][1], iterations))
+            else:
+                final_results[key][stat] = average_dict(final_results[key][stat], iterations)
+    write_res_to_file(final_results, "SVM")
 

@@ -35,7 +35,7 @@ def create_relevant_plot(results,label,location,title):
     lbda_res = results["LAMBDA"]
     ax.plot(svm_res[0],svm_res[1],"g")
     ax.plot(lbda_res[0], lbda_res[1],"b")
-    plt.savefig(location + "/"+label+".jpg")
+    plt.savefig(location + "/"+label.replace(" ","")+".jpg")
     plt.clf()
 
 def create_hist_graph(main_folder):
@@ -53,7 +53,7 @@ def create_hist_graph(main_folder):
             create_histograms(results, hist[0], "results/"+sub_folder, hist[1])
 
 def run_on_folders(main_folder):
-    plot_names = [("avg_f","Feature Changed","Average Number Of Features Changed"),("cos","Average Cosine Distance","Average Diameter Of Competitors"),("kendall","Kendall Tau","Average Kendall-Tau With Last Iteration"),("orig","Kendall Tau","Average Kendall-Tau With Original List"),("winner","Change Rate","Winner Change Frequency")]
+    plot_names = [("avg_f","Feature Changed","Average Number Of Features Changed"),("cos","Average Cosine Distance","Average Diameter Of Competitors"),("kendall","Kendall Tau Measure","Average Kendall-Tau With Last Iteration"),("orig","Kendall Tau","Average Kendall-Tau With Original List"),("winner","Change Rate","Winner Change Frequency")]
     sub_folders = ["01","001","005"]
     for sub_folder in sub_folders:
         for plot_name in plot_names:
