@@ -19,7 +19,6 @@ def write_res_to_file(result,model):
     for key in result:
         if not os.path.exists(model+"/"+key):
             os.makedirs(model+"/"+key)
-        key = result.keys()[0]
         for stat in result[key]:
 
             out_file = open(model+"/"+key + "/" + stat + ".txt", 'w')
@@ -57,7 +56,7 @@ if __name__ == "__main__":
     l = lfc.letor_folds_creator_z_normalize(data_set_location, data_set_location, True)
     score_file = "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/final_score_combined.txt"
 
-    pool = p(2)
+    pool = p(3)
 
     gg = d.winner_reference_point_random("01", 0.1)
     aa = d.winner_reference_point_random("005", 0.05)
