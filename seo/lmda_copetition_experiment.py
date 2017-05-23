@@ -71,7 +71,7 @@ if __name__ == "__main__":
     lbda_score_file = "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
     svm_score_file = "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/final_score_combined.txt"
 
-    pool = p(2)
+    pool = p(3)
 
     gg = d.lambda_mart_stats_handler("01", 0.1,c)
     aa = d.lambda_mart_stats_handler("005", 0.05,c)
@@ -142,4 +142,4 @@ if __name__ == "__main__":
                 svm_final_results[key][stat] =(svm_final_results[key][stat][0], average_list(svm_final_results[key][stat][1], iterations))
             else:
                 svm_final_results[key][stat] = average_dict(svm_final_results[key][stat], iterations)
-    write_res_to_file(svm_final_results, "SVM")
+    write_res_to_file(svm_final_results,"SVM")
