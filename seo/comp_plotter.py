@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-
+import math
 def parse_file(file):
     x_axis = []
     y_axis = []
@@ -20,7 +20,7 @@ def parse_file_hist(file):
         for record in records:
             splited = record.split()
             x_axis.append(int(splited[0]))
-            y_axis.append(int(splited[1]))
+            y_axis.append(math.ceil(float(splited[1])))
     return x_axis,y_axis
 
 def create_relevant_plot(results,label,location,title):

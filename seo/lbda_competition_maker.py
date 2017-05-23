@@ -7,6 +7,7 @@ import cPickle as cp
 import random
 import sys
 
+
 class competition_maker:
 
     def __init__(self,num_of_iterations,budget_creator,score_file,number_of_competitors,data_set_location,fraction,chosen_models,query_per_fold,c_d_loc,new_scores_path,models_path):
@@ -54,6 +55,7 @@ class competition_maker:
         return competitors_features
 
     def competition(self,final_scores_directory):
+        items_holder = {}
         sys.stdout.flush()
         results = {}
         competitors = self.lambdamart_file_handler.get_competitors_for_query(self.score_file, self.number_of_competitors)
@@ -82,7 +84,7 @@ class competition_maker:
             items = range(136)#TODO: make more generic
             random.shuffle(items)
             items = items[:50]
-            print items
+            items_holder[iteration] = items
             features_to_change ,avg_feature_num= self.get_features_to_change(competitors,items,value_for_change,document_feature_index,original_vectors)
             print "got features to change"
             average_feature_number.append(avg_feature_num)
@@ -142,7 +144,9 @@ class competition_maker:
         results["avg_f"] = (x_axis,average_feature_number)
         meta_results = {}
         meta_results[self.lambdamart_file_handler.model] = results
-        return meta_results
+        meta_item_holder = {}
+        meta_item_holder[self.lambdamart_file_handler.model] = items_holder
+        return meta_results,meta_item_holder
 
 
     def get_new_rankings(self,document_features,query_per_fold,final_scores_directory):

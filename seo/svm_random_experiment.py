@@ -20,7 +20,6 @@ def write_res_to_file(result,model):
         if not os.path.exists(model+"/"+key):
             os.makedirs(model+"/"+key)
         for stat in result[key]:
-
             out_file = open(model+"/"+key + "/" + stat + ".txt", 'w')
             try:
                 if isinstance(result[key][stat], tuple):
@@ -35,6 +34,7 @@ def write_res_to_file(result,model):
                 print stat
             out_file.close()
 
+
 def sum_lists(list_a,list_b):
     return [a + b for a,b in zip(list_a,list_b)]
 
@@ -46,6 +46,7 @@ def sum_dicts(x,y):
 
 def average_dict(dict_a,iterations):
     return {k: float(dict_a.get(k, 0))/iterations for k in set(dict_a)}
+
 
 
 if __name__ == "__main__":

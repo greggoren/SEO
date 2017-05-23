@@ -51,7 +51,7 @@ class competition_maker:
                             competitors_features[query][doc][index]=value_for_change[query][index]
         return competitors_features
 
-    def competition(self,final_scores_directory):
+    def competition(self,items_holder):
         results = {}
         competitors = self.lambdamart_file_handler.get_competitors_for_query(self.score_file, self.number_of_competitors)
         reference_of_indexes = cp.loads(cp.dumps(competitors, 1))
@@ -75,10 +75,7 @@ class competition_maker:
             average_distance = self.lambdamart_file_handler.create_budget_per_query(self.fraction, document_feature_index)
             value_for_change = self.lambdamart_file_handler.create_items_for_knapsack(competitors, document_feature_index)
             print "getting features to change"
-            items = range(136)  # TODO: make more generic
-            random.shuffle(items)
-            items = items[:50]
-            print items
+            items = items_holder[iteration]
             features_to_change, avg_feature_num = self.get_features_to_change(competitors, items, value_for_change,
                                                                               document_feature_index, original_vectors)
 
