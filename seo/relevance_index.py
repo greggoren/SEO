@@ -7,4 +7,4 @@ class relevance_index:
         with open(self.qrels_file) as qrel:
             for query_relevance in qrel:
                 splited_data = query_relevance.split()
-self.rel_index[splited_data[2]] = splited_data[3]
+        self.rel_index[splited_data[2]] = splited_data[3]
