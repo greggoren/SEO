@@ -87,7 +87,7 @@ if __name__ == "__main__":
                                                "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/")
     svm_chosen_models = svm_gg.recover_models_per_fold("/lv_local/home/sgregory/LTOR1/models/SVM",
                                                "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/")
-    lbda_f = partial(lbda_simulation, lbda_chosen_models, data_set_location, q.query_to_fold_index, lbda_score_file, "/lv_local/home/sgregory/LTOR_MART_min_max/competition", "/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/", "/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",rel_index)
+    lbda_f = partial(lbda_simulation, lbda_chosen_models, data_set_location, q.query_to_fold_index, lbda_score_file, "/lv_local/home/sgregory/LTOR_MART_min_max/competition", "/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/", "/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",rel_index.rel_index)
 
     lbda_g_input = [gg, aa, bb]
     svm_handlers_input = [svm_gg,svm_aa,svm_bb]
@@ -99,7 +99,7 @@ if __name__ == "__main__":
         lbda_results = [meta_result[0] for meta_result in meta_results]
         item_holders = [meta_result[1] for meta_result in meta_results]
         svm_g_input = determine_argument_pairs(svm_handlers_input,item_holders)
-        svm_f =partial(svm_simulation, svm_chosen_models, data_set_location, q.query_to_fold_index, svm_score_file,rel_index)
+        svm_f =partial(svm_simulation, svm_chosen_models, data_set_location, q.query_to_fold_index, svm_score_file,rel_index.rel_index)
         svm_results = pool.map(svm_f,svm_g_input)
         if not lbda_final_results:
             for result in lbda_results:
