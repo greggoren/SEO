@@ -54,7 +54,7 @@ class competition_maker:
                             competitors_features[query][doc][index]=value_for_change[query][index]
         return competitors_features
 
-    def competition(self,final_scores_directory):
+    def competition(self,final_scores_directory,relevance_index):
         items_holder = {}
         sys.stdout.flush()
         results = {}
@@ -73,6 +73,10 @@ class competition_maker:
         average_feature_number = []
         last_winner_original_rank = {}
         original_winner_final_rank = {}
+        relevance_winner_hist = {}
+        original_winner_relevance_hist = {}
+        improved_relevance = 0
+        decreased_relevance = 0
         for iteration in range(0,self.num_of_iterations):
             sys.stdout.flush()
             print "iteration number ",iteration+1
@@ -111,6 +115,16 @@ class competition_maker:
                     if not original_winner_final_rank.get(new_rank[0],False):
                         original_winner_final_rank[new_rank[0]]=0
                     original_winner_final_rank[new_rank[0]]+=1
+                    if not relevance_winner_hist.get(relevance_index[competitors[query][0]],False):
+                        relevance_winner_hist[relevance_index[competitors[query][0]]] = 0
+                    relevance_winner_hist[relevance_index[competitors[query][0]]] += 1
+                    if not original_winner_relevance_hist.get(relevance_index[reference_of_indexes[query][0]],False):
+                        original_winner_relevance_hist[relevance_index[reference_of_indexes[query][0]]]=0
+                    original_winner_relevance_hist[relevance_index[reference_of_indexes[query][0]]]+=1
+                    if relevance_index[reference_of_indexes[query][0]] < relevance_index[competitors[query][0]]:
+                        improved_relevance += 1
+                    elif relevance_index[reference_of_indexes[query][0]] > relevance_index[competitors[query][0]]:
+                        decreased_relevance += 1
                 kendall_tau,p_value = kt(old_rank,new_rank)
 
                 if not math.isnan(kendall_tau):
@@ -133,7 +147,9 @@ class competition_maker:
             y_axis.append(average)
             original_reference.append(float(sum_of_original_kt)/denominator)
             competitors = cp.loads(cp.dumps(competitors_new,-1))
-
+        print "LambdaMart stats:"
+        print "Number Of queries that improved winner relevance: ", improved_relevance
+        print "Number of queries that decreased winner relevance: ", decreased_relevance
         results["kendall"]=(x_axis,y_axis)
         results["cos"] = (x_axis,average_distances)
         results["winner"] = (x_axis,changed_winner_averages)
@@ -142,6 +158,8 @@ class competition_maker:
         results["whoisthewinner"] = last_winner_original_rank
         results["originalwinnerrank"]=original_winner_final_rank
         results["avg_f"] = (x_axis,average_feature_number)
+        results["finalwinnerrel"] = relevance_winner_hist
+        results["originalrelhist"] = original_winner_relevance_hist
         meta_results = {}
         meta_results[self.lambdamart_file_handler.model] = results
         meta_item_holder = {}

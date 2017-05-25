@@ -9,16 +9,18 @@ import letor_fold_creator_z_normalize as lfc
 import query_to_fold as qtf
 from model_running import cross_validator as cv
 import svm_random_file_handler as srfh
+import relevance_index as ri
 
-def lbda_simulation(chosen_models, data_set_location, query_to_fold_index, score_file, c_d_loc, new_scores_path, models_path, budget_creator):
+
+def lbda_simulation(chosen_models, data_set_location, query_to_fold_index, score_file, c_d_loc, new_scores_path, models_path, rel_index,budget_creator):
 
     c = lcm.competition_maker(12, budget_creator, score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index, c_d_loc + "/" + budget_creator.model, new_scores_path + "/" + budget_creator.model, models_path)
-    return c.competition("/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/"+budget_creator.model+"/final")
+    return c.competition("/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/"+budget_creator.model+"/final",rel_index)
 
-def svm_simulation(chosen_models,data_set_location,query_to_fold_index,score_file,mapped_args):
+def svm_simulation(chosen_models,data_set_location,query_to_fold_index,score_file,rel_index,mapped_args):
     items_holder, budget_creator = mapped_args
-    c = scm.competition_maker(12, budget_creator, score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index, c_d_loc + "/" + budget_creator.model, new_scores_path + "/" + budget_creator.model, models_path)
-    return c.competition(items_holder)
+    c = scm.competition_maker(12, budget_creator, score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
+    return c.competition(items_holder,rel_index)
 
 def write_res_to_file(result,model):
     for key in result:
@@ -70,7 +72,8 @@ if __name__ == "__main__":
     c = cv.cross_validator(5, l, "LTOR_MART_min_max")
     lbda_score_file = "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
     svm_score_file = "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/final_score_combined.txt"
-
+    rel_index = ri.relevance_index("qrels")
+    rel_index.create_relevance_index()
     pool = p(3)
 
     gg = d.lambda_mart_stats_handler("01", 0.1,c)
@@ -84,7 +87,7 @@ if __name__ == "__main__":
                                                "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/")
     svm_chosen_models = svm_gg.recover_models_per_fold("/lv_local/home/sgregory/LTOR1/models/SVM",
                                                "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/")
-    lbda_f = partial(lbda_simulation, lbda_chosen_models, data_set_location, q.query_to_fold_index, lbda_score_file, "/lv_local/home/sgregory/LTOR_MART_min_max/competition", "/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/", "/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/")
+    lbda_f = partial(lbda_simulation, lbda_chosen_models, data_set_location, q.query_to_fold_index, lbda_score_file, "/lv_local/home/sgregory/LTOR_MART_min_max/competition", "/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/", "/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",rel_index)
 
     lbda_g_input = [gg, aa, bb]
     svm_handlers_input = [svm_gg,svm_aa,svm_bb]
@@ -96,7 +99,7 @@ if __name__ == "__main__":
         lbda_results = [meta_result[0] for meta_result in meta_results]
         item_holders = [meta_result[1] for meta_result in meta_results]
         svm_g_input = determine_argument_pairs(svm_handlers_input,item_holders)
-        svm_f =partial(svm_simulation, svm_chosen_models, data_set_location, q.query_to_fold_index, svm_score_file)
+        svm_f =partial(svm_simulation, svm_chosen_models, data_set_location, q.query_to_fold_index, svm_score_file,rel_index)
         svm_results = pool.map(svm_f,svm_g_input)
         if not lbda_final_results:
             for result in lbda_results:
