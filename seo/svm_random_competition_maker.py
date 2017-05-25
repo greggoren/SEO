@@ -141,7 +141,7 @@ class competition_maker:
             y_axis.append(average)
             original_reference.append(float(sum_of_original_kt) / denominator)
             competitors = cp.loads(cp.dumps(competitors_new, -1))
-        print "SVM stats:"
+        print self.lambdamart_file_handler.model," SVM stats:"
         print "Number Of queries that improved winner relevance: ",improved_relevance
         print "Number of queries that decreased winner relevance: ",decreased_relevance
         sys.stdout.flush()
@@ -155,6 +155,9 @@ class competition_maker:
         results["avg_f"] = (x_axis, average_feature_number)
         results["finalwinnerrel"] = relevance_winner_hist
         results["originalrelhist"] = original_winner_relevance_hist
+        results["decOrAsc"] = {}
+        results["decOrAsc"]["inc"] = improved_relevance
+        results["decOrAsc"]["dec"] = decreased_relevance
         meta_results = {}
         meta_results[self.lambdamart_file_handler.model] = results
         return meta_results

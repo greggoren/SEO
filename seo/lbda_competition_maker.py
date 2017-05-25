@@ -63,7 +63,6 @@ class competition_maker:
         reference_of_indexes = cp.loads(cp.dumps(competitors,1))
         document_feature_index = self.lambdamart_file_handler.index_features_for_competitors(competitors, self.data_set_location, True)
         original_vectors = cp.loads(cp.dumps(document_feature_index,-1))
-        model_weights_per_fold_index = self.lambdamart_file_handler.get_chosen_model_weights_for_fold(self.chosen_models)
         x_axis =[]
         y_axis = []
         changed_winner_averages =[]
@@ -147,7 +146,7 @@ class competition_maker:
             y_axis.append(average)
             original_reference.append(float(sum_of_original_kt)/denominator)
             competitors = cp.loads(cp.dumps(competitors_new,-1))
-        print "LambdaMart stats:"
+        print self.lambdamart_file_handler.model," LambdaMart stats:"
         print "Number Of queries that improved winner relevance: ", improved_relevance
         print "Number of queries that decreased winner relevance: ", decreased_relevance
         results["kendall"]=(x_axis,y_axis)
@@ -160,6 +159,9 @@ class competition_maker:
         results["avg_f"] = (x_axis,average_feature_number)
         results["finalwinnerrel"] = relevance_winner_hist
         results["originalrelhist"] = original_winner_relevance_hist
+        results["decOrAsc"] = {}
+        results["decOrAsc"]["inc"] = improved_relevance
+        results["decOrAsc"]["dec"] = decreased_relevance
         meta_results = {}
         meta_results[self.lambdamart_file_handler.model] = results
         meta_item_holder = {}
