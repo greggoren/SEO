@@ -19,7 +19,10 @@ def parse_file_hist(file):
     with open(file) as records:
         for record in records:
             splited = record.split()
-            x_axis.append(int(splited[0]))
+            try:
+                x_axis.append(int(splited[0]))
+            except:
+                x_axis.append(splited[0])
             y_axis.append(math.ceil(float(splited[1])))
     return x_axis,y_axis
 
@@ -40,7 +43,7 @@ def create_relevant_plot(results,label,location,title):
 
 def create_hist_graph(main_folder):
     hist_names = [("originalwinnerrank", "Original Winner Final Rank"),
-                  ("whoisthewinner", "Final Winner Original Rank")]
+                  ("whoisthewinner", "Final Winner Original Rank"),("finalwinnerrel","Final Winner Original Relevance"),("originalrelhist","Original Winner Relevance Hist")]
     sub_folders = ["01", "001", "005"]
     for sub_folder in sub_folders:
         for hist in hist_names:
@@ -82,8 +85,34 @@ def create_histograms(results,label,location,title):
     plt.savefig(location + "/"+label+".jpg")
     plt.clf()
 
+def create_csv_files(main_folder):
+    sub_folders = ["01", "001", "005"]
+    data = {}
+    data["SVM"]={}
+    data["LAMBDAMART"]={}
+    for sub_folder in sub_folders:
+        joined_file = "results/"+sub_folder+"/decorasc.csv"
+        file_svm = main_folder + "/SVM/" + sub_folder + "/decOrAsc.txt"
+        file_lbda = main_folder + "/LAMDAMART/" + sub_folder + "/decOrAsc.txt"
+        with open(file_svm) as svm_data:
+            for line in svm_data:
+                splited = line.split()
+                data["SVM"][splited[0]] = splited[1]
+        with open(file_lbda) as lbda_data:
+            for line in lbda_data:
+                splited = line.split()
+                data["LAMBDAMART"][splited[0]] = splited[1]
+        with open(joined_file,'w') as out:
+            out.write("EVENT,SVM,LAMBDAMART\n")
+            for key in data["SVM"]:
+                if key=="dec":
+                    event = "Decreased"
+                else:
+                    event= "Increased"
+                out.write(event+","+data["SVM"][key]+","+data["LAMBDAMART"][key]+"\n")
 
 if __name__=="__main__":
     main_folder = "C:/study/res/random"
     run_on_folders(main_folder)
     create_hist_graph(main_folder)
+    create_csv_files(main_folder)

@@ -71,7 +71,7 @@ if __name__ == "__main__":
     l = lfc.letor_folds_creator_z_normalize(data_set_location, data_set_location, True)
     c = cv.cross_validator(5, l, "LTOR_MART_min_max")
     lbda_score_file = "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
-    svm_score_file = "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/final_score_combined.txt"
+    svm_score_file = lbda_score_file#"/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/final_score_combined.txt"
     rel_index = ri.relevance_index("qrels")
     rel_index.create_relevance_index()
     pool = p(3)
