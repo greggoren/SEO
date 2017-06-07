@@ -13,12 +13,12 @@ import relevance_index as ri
 
 def lbda_simulation(chosen_models, data_set_location, query_to_fold_index, score_file, c_d_loc, new_scores_path, models_path, rel_index,budget_creator):
 
-    c = lcm.competition_maker(12, budget_creator, score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index, c_d_loc + "/" + budget_creator.model, new_scores_path + "/" + budget_creator.model, models_path)
+    c = scm.competition_maker(12, budget_creator, score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index, c_d_loc + "/" + budget_creator.model, new_scores_path + "/" + budget_creator.model, models_path)
     return c.competition("/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/"+budget_creator.model+"/final",rel_index)
 
 def svm_simulation(chosen_models,data_set_location,query_to_fold_index,score_file,rel_index,mapped_args):
     items_holder, budget_creator = mapped_args
-    c = scm.competition_maker(12, budget_creator, score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
+    c = lcm.competition_maker(12, budget_creator, score_file, 10, data_set_location, 0.1, chosen_models, query_to_fold_index)
     return c.competition(items_holder,rel_index)
 
 def write_res_to_file(result,model):
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     data_set_location = "/lv_local/home/sgregory/letor_fixed1"
     q = qtf.qtf(data_set_location)
     q.create_query_to_fold_index()
-    l = lfc.letor_folds_creator_z_normalize(data_set_location, data_set_location, True)
+    l = lfc.letor_folds_creator(data_set_location, data_set_location, True)
     c = cv.cross_validator(5, l, "LTOR_MART_min_max")
     lbda_score_file = "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
     svm_score_file = lbda_score_file#"/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/final_score_combined.txt"

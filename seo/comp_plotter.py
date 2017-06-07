@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import math
+
 def parse_file(file):
     x_axis = []
     y_axis = []
