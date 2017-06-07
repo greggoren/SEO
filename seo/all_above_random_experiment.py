@@ -136,7 +136,7 @@ if __name__ == "__main__":
                 lbda_final_results[key][stat] =(lbda_final_results[key][stat][0], average_list(lbda_final_results[key][stat][1], iterations))
             else:
                 lbda_final_results[key][stat] = average_dict(lbda_final_results[key][stat], iterations)
-    write_res_to_file(lbda_final_results, "LAMDAMART")
+    write_res_to_file(lbda_final_results, "LAMDAMART_all_above")
 
     for key in svm_final_results:
         for stat in svm_final_results[key]:
@@ -144,4 +144,4 @@ if __name__ == "__main__":
                 svm_final_results[key][stat] =(svm_final_results[key][stat][0], average_list(svm_final_results[key][stat][1], iterations))
             else:
                 svm_final_results[key][stat] = average_dict(svm_final_results[key][stat], iterations)
-    write_res_to_file(svm_final_results,"SVM")
+    write_res_to_file(svm_final_results,"SVM_all_above")
