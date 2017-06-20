@@ -70,6 +70,36 @@ def run_on_folders(main_folder):
             create_relevant_plot(results,plot_name[1],"results/"+sub_folder,plot_name[2])
 
 
+def create_combined_graphs(main_folder):
+    plot_names = [("avg_f", "Feature Changed", "Average Number Of Features Changed"),
+                  ("cos", "Average Cosine Distance", "Average Diameter Of Competitors"),
+                  ("kendall", "Kendall Tau Measure", "Average Kendall-Tau With Last Iteration"),
+                  ("orig", "Kendall Tau", "Average Kendall-Tau With Original List"),
+                  ("winner", "Change Rate", "Winner Change Frequency")]
+    sub_folders = ["01", "001", "005"]
+
+    for plot_name in plot_names:
+        i = 1
+        plt.figure(figsize=(13, 10)).suptitle(plot_name[2], fontsize=14, fontweight='bold')
+
+        for sub_folder in sub_folders:
+            results = {}
+            file_svm = main_folder + "/SVM/" + sub_folder + "/" + plot_name[0] + ".txt"
+            x, y = parse_file(file_svm)
+            results["SVM"] = (x, y)
+            file_lbda = main_folder + "/LAMDAMART/" + sub_folder + "/" + plot_name[0] + ".txt"
+            results["LAMBDA"] = (parse_file(file_lbda))
+            plt.subplot(220+i)
+            plt.title(sub_folder.replace("0","0.",1))
+            plt.ylabel(plot_name[1])
+            plt.xlabel("Iterations")
+            svm_res = results["SVM"]
+            lbda_res = results["LAMBDA"]
+            plt.plot(svm_res[0], svm_res[1], "g")
+            plt.plot(lbda_res[0], lbda_res[1], "b")
+            i += 1
+        plt.savefig(main_folder + "/" + plot_name[0].replace(" ", "") + ".jpg")
+        plt.clf()
 
 def create_histograms(results,label,location,title):
     plt.figure(1)
@@ -112,8 +142,40 @@ def create_csv_files(main_folder):
                     event= "Increased"
                 out.write(event+","+data["SVM"][key]+","+data["LAMBDAMART"][key]+"\n")
 
+def create_combined_histograms(main_folder):
+    hist_names = [("originalwinnerrank", "Original Winner Final Rank"),
+                  ("whoisthewinner", "Final Winner Original Rank"),
+                  ("finalwinnerrel", "Final Winner Original Relevance"),
+                  ("originalrelhist", "Original Winner Relevance Hist")]
+    sub_folders = ["01", "001", "005"]
+    for hist in hist_names:
+        i =1
+        plt.figure(figsize=(13,10)).suptitle(hist[1], fontsize=14, fontweight='bold')
+        for sub_folder in sub_folders:
+            plt.title(sub_folder.replace("0","0.",1))
+            results = {}
+            file_svm = main_folder + "/SVM/" + sub_folder + "/" + hist[0] + ".txt"
+            x, y = parse_file_hist(file_svm)
+            results["SVM"] = (x, y)
+            file_lbda = main_folder + "/LAMDAMART/" + sub_folder + "/" + hist[0] + ".txt"
+            results["LAMBDA"] = (parse_file_hist(file_lbda))
+            plt.subplot(220+i)
+            plt.bar(results["SVM"][0], results["SVM"][1],width=0.3, align="center",color='g')
+            t = [a -0.3 for a in results["LAMBDA"][0]]
+            plt.bar(t, results["LAMBDA"][1], width=0.3, align="center", color='b')
+            plt.ylabel("Number Of Queries")
+            if hist[1].__contains__("Rel"):
+                plt.xlabel("Relevance")
+            else:
+                plt.xlabel("Rank")
+            i+=1
+        plt.savefig(main_folder + "/" + hist[0] + ".jpg")
+        plt.clf()
+
 if __name__=="__main__":
-    main_folder = "C:/study/res/random"
-    run_on_folders(main_folder)
-    create_hist_graph(main_folder)
-    create_csv_files(main_folder)
+    main_folder = "C:/study/res/lbdalist"
+    create_combined_graphs(main_folder)
+    create_combined_histograms(main_folder)
+    #run_on_folders(main_folder)
+    #create_hist_graph(main_folder)
+    #create_csv_files(main_folder)

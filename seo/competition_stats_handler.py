@@ -111,6 +111,25 @@ class competition_stats_handler():
                     candidate_two = document_two
         return candidate_one,candidate_two,max_distance
 
+    def get_average_distance(self,query_number,document_features):
+        sum_of_distances = 0.0
+        denom =0
+        already_checked = {}
+        for document_one in document_features[query_number]:
+            for document_two in document_features[query_number]:
+                if not already_checked.get(document_two,False):
+                    already_checked[document_two]=[]
+                if document_one not in already_checked[document_two]:
+                    if document_one!=document_two:
+                        denom+=1
+                        distance = self.cosine_dist(document_features[query_number][document_one],document_features[query_number][document_two])
+                        sum_of_distances += distance
+                        already_checked[document_two].append(document_one)
+        if sum_of_distances==0:
+            return sum_of_distances
+        return sum_of_distances/denom
+
+
     def square_rooted(self,x):
         return sqrt(sum([a * a for a in x]))
 
@@ -122,17 +141,12 @@ class competition_stats_handler():
 
     def create_budget_per_query(self,fraction,competitor_features):
         print "creating budget per query"
-        #budget_per_query = {}
         sum_of_distances = 0
         denominator = 0
         for query in competitor_features:
-            doc_one,doc_two,max_distance= self.get_diameter_documents(query,competitor_features)
-            if doc_two != "" and doc_one != "":
-                #budget_per_query[query] = fraction*self.get_budget(query,doc_one,doc_two,competitor_features)
-                sum_of_distances+=max_distance
-                denominator+=1
-            #else:
-                #budget_per_query[query] = 0
+            avg_distance= self.get_average_distance(query,competitor_features)
+            denominator += 1
+            sum_of_distances+=avg_distance
         return sum_of_distances/denominator
 
 

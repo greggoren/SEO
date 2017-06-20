@@ -15,7 +15,7 @@ class all_above_stat_handler(csh.competition_stats_handler):
         print "getting reference vectors"
         chosen_vectors={}
         opt = True
-        cache_list_of_weights=self.initialize_cache_of_weights(number_of_competitors)
+        cache_list_of_weights=self.initilize_cache_of_normaliztion(number_of_competitors)
         for query in document_features:
             chosen_vectors[query]={}
             competitors_list = competitors[query]
@@ -30,13 +30,26 @@ class all_above_stat_handler(csh.competition_stats_handler):
                     list_of_vectors=[]
                 if list_of_vectors:
                     weights_for_average = cache_list_of_weights[index_of_competitor]
-                    temporary_list = [sum(i) for i in zip(*list_of_vectors)]
-                    competitor_refrence_vector = [a*b for a,b in zip(weights_for_average,temporary_list)]
-                    chosen_vectors[query][competitor]=competitor_refrence_vector
+                    zipped = zip(weights_for_average, list_of_vectors)
+                    temporary_list = []
+                    for i, list in zipped:
+                        temporary_list.append([i * d for d in list])
+                    competitor_refrence_vector = [sum(i) for i in zip(*temporary_list)]
+                    chosen_vectors[query][competitor] = competitor_refrence_vector
                 else:
                     chosen_vectors[query][competitor] = []
         return chosen_vectors
 
+
+    def initilize_cache_of_normaliztion(self,number_of_competitors,alpha=60):
+        cache_list_of_weights = {}
+        for index in range(1, number_of_competitors):
+            list_of_index = list((range(1, index)))
+            temp_result = [1.0 / (obj + alpha) for obj in list_of_index]
+            denominator = sum(temp_result)
+            result = [float(obj)/denominator for obj in temp_result]
+            cache_list_of_weights[index] = result
+        return cache_list_of_weights
 
     def initialize_cache_of_weights(self,number_of_competitors):
         cache_list_of_weights = {}
@@ -47,7 +60,7 @@ class all_above_stat_handler(csh.competition_stats_handler):
             cache_list_of_weights[index]=result
         return cache_list_of_weights
 
-    def create_items_for_knapsack(self,competitors,features_index,model_weights_index,query_to_fold,original_vectors,number_of_competitors):
+    def create_items_for_knapsack(self,competitors,features_index,number_of_competitors):
         print "creating items for bag"
         value_for_change = self.create_vector_from_above_competitors(competitors,features_index,number_of_competitors)
         print "items creation ended"

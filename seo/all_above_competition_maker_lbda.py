@@ -52,7 +52,7 @@ class competition_maker:
                 for index in range(length):
                     if features_to_change.get(query, False):
                         if index in features_to_change[query][doc]:
-                            competitors_features[query][doc][index]=value_for_change[query][index]
+                            competitors_features[query][doc][index]=value_for_change[query][doc][index]
         return competitors_features
 
     def competition(self,final_scores_directory,relevance_index):

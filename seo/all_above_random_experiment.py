@@ -69,8 +69,9 @@ if __name__ == "__main__":
     q.create_query_to_fold_index()
     l = lfc.letor_folds_creator(data_set_location, data_set_location, True)
     c = cv.cross_validator(5, l, "LTOR_MART_min_max")
-    lbda_score_file = "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
-    svm_score_file = lbda_score_file#"/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/final_score_combined.txt"
+
+    svm_score_file = "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/final_score_combined.txt"
+    lbda_score_file = svm_score_file#"/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/final_score_combined.txt"
     rel_index = ri.relevance_index("qrels")
     rel_index.create_relevance_index()
     pool = p(3)
@@ -86,6 +87,7 @@ if __name__ == "__main__":
                                                "/lv_local/home/sgregory/LTOR_MART_min_max/test_scores_trec_format/LAMBDAMART/")
     svm_chosen_models = svm_gg.recover_models_per_fold("/lv_local/home/sgregory/LTOR1/models/SVM",
                                                "/lv_local/home/sgregory/LTOR1/test_scores_trec_format/SVM/")
+    #lbda_simulation(lbda_chosen_models, data_set_location, q.query_to_fold_index, lbda_score_file, "/lv_local/home/sgregory/LTOR_MART_min_max/competition", "/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/", "/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",rel_index.rel_index,gg)
     lbda_f = partial(lbda_simulation, lbda_chosen_models, data_set_location, q.query_to_fold_index, lbda_score_file, "/lv_local/home/sgregory/LTOR_MART_min_max/competition", "/lv_local/home/sgregory/LTOR_MART_min_max/new_scores/", "/lv_local/home/sgregory/LTOR_MART_min_max/models/LAMBDAMART/",rel_index.rel_index)
 
     lbda_g_input = [gg, aa, bb]

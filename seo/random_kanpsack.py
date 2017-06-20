@@ -22,6 +22,8 @@ class random_knapsack:
         temp_vec = copy(competitor_features)
         for name in self.items:
             index = name
+            if len(first_competitor_features) == 0:
+                break
             if first_competitor_features[index]==temp_vec[index]:
                 continue
             temp_vec[index] = first_competitor_features[index]
@@ -30,5 +32,4 @@ class random_knapsack:
                 continue
 
             bagged += [(name,)]
-
         return bagged
