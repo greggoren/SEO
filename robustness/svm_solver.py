@@ -46,7 +46,7 @@ class SVM(object):
         else:
             tmp1 = diags(np.ones(n_samples) * -1)
             tmp2 = diags(np.ones(n_samples))
-            G = cvxopt.matrix(vstack((tmp1, tmp2)))
+            G = cvxopt.sparse(vstack((tmp1, tmp2)))
             tmp1 = np.zeros(n_samples)
             tmp2 = np.ones(n_samples) * self.C
             h = cvxopt.matrix(np.hstack((tmp1, tmp2)))
