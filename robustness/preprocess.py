@@ -54,7 +54,7 @@ class preprocess:
         data = []
         labels = []
         k=0
-        comb = itertools.combinations(range(X.shape[0]), 2)
+        comb = list(itertools.combinations(range(X.shape[0]), 2))
         for (i,j) in comb:
             if (y[i]==y[j]) or (groups[i]!=groups[j]):
                 continue

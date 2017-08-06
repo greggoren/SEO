@@ -26,11 +26,13 @@ class SVM(object):
         n_samples, n_features = len(X),len(X[0])
         print n_samples,n_features
         # Gram matrix
-        K = np.zeros((n_samples, n_samples))
+        """K = np.zeros((n_samples, n_samples))
         for i in range(n_samples):
             for j in range(n_samples):
-                K[i, j] = self.kernel(X[i], X[j])
+                K[i, j] = self.kernel(X[i], X[j])"""
+        K = y[:] * X
 
+        K = np.dot(K, K.T)
         P = cvxopt.matrix(np.outer(y, y) * K)
         q = cvxopt.matrix(np.ones(n_samples) * -1)
         A = cvxopt.matrix(y, (1, n_samples))
