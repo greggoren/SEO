@@ -2,7 +2,7 @@ import numpy as np
 from numpy import linalg
 import cvxopt
 import cvxopt.solvers
-
+import scipy.sparse.diags as diags
 
 def linear_kernel(x1, x2):
     return np.dot(x1, x2)
@@ -28,7 +28,7 @@ class SVM(object):
         # Gram matrix
         """K = np.zeros((n_samples, n_samples))
         for i in range(n_samples):
-            for j in range(n_samples):
+            for j in range(i,n_samples):
                 K[i, j] = self.kernel(X[i], X[j])"""
         K = y[:] * X
 
@@ -38,14 +38,13 @@ class SVM(object):
         A = cvxopt.matrix(y, (1, n_samples))
         print A
         b = cvxopt.matrix(0.0)
-        del X
-        del y
+
         if self.C is None:
             G = cvxopt.matrix(np.diag(np.ones(n_samples) * -1))
             h = cvxopt.matrix(np.zeros(n_samples))
         else:
-            tmp1 = np.diag(np.ones(n_samples) * -1)
-            tmp2 = np.identity(n_samples)
+            tmp1 = diags(np.ones(n_samples) * -1)
+            tmp2 = diags(np.ones(n_samples))
             G = cvxopt.matrix(np.vstack((tmp1, tmp2)))
             tmp1 = np.zeros(n_samples)
             tmp2 = np.ones(n_samples) * self.C
