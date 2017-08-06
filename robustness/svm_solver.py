@@ -8,7 +8,7 @@ from scipy.sparse import csr_matrix
 from scipy.sparse import lil_matrix
 
 def linear_kernel(x1, x2):
-    return np.dot(x1, x2)
+    return np.dot(x1, x2.T)
 
 
 def polynomial_kernel(x, y, p=3):
