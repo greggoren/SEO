@@ -1,7 +1,7 @@
 import svm_solver as ss
 import numpy as np
 import preprocess as p
-from sklearn.datasets import load_svmlight_file
+from sklearn.decomposition import PCA
 
 if __name__=="__main__":
     data_set_location = "../../../svm_test"
@@ -12,5 +12,9 @@ if __name__=="__main__":
     a,b,c=prep.retrieve_data_from_file(data_set_location)
     X,y = prep.create_data_set(a,b,c)"""
     svm = ss.SVM(C=0.1)
-    svm.fit(np.matrix(X,copy=False),np.array(y))
+    matrix =np.matrix(X,copy=False)
+    pca = PCA(n_components=5,copy=False,svd_solver='arpack')
+    reduced = pca.fit_transform(matrix)
+    print pca.explained_variance_ratio_
+    svm.fit(reduced,np.array(y))
 
