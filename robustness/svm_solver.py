@@ -2,7 +2,7 @@ import numpy as np
 from numpy import linalg
 import cvxopt
 import cvxopt.solvers
-import scipy.sparse.diags as diags
+from scipy.sparse import diags
 
 def linear_kernel(x1, x2):
     return np.dot(x1, x2)
