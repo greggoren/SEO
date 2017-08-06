@@ -38,7 +38,8 @@ class SVM(object):
         A = cvxopt.matrix(y, (1, n_samples))
         print A
         b = cvxopt.matrix(0.0)
-
+        del X
+        del y
         if self.C is None:
             G = cvxopt.matrix(np.diag(np.ones(n_samples) * -1))
             h = cvxopt.matrix(np.zeros(n_samples))
