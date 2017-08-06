@@ -1,8 +1,11 @@
 import os
 import numpy as np
 import itertools
+from sklearn.datasets import load_svmlight_file
+
 
 class preprocess:
+
 
 
     def __init__(self,data_set_location):
@@ -15,7 +18,7 @@ class preprocess:
         amount = 0
         if (normalized):
             amount = 1
-        index =0
+        label_index =0
         for dirs in os.walk(self.data_set_location):
             if dirs[1]:
                 first_directory = dirs[0]+"/"+dirs[1][0]
@@ -42,6 +45,26 @@ class preprocess:
             print "feature index creation ended"
             return feature_index_query,labels_index
 
+    def retrieve_data_from_file(self,file):
+        X, y, groups= load_svmlight_file(file,query_id=True)
+        return X,y,groups
+
+    def create_data_set(self,X,y,groups):
+        print "creating data set"
+        data = []
+        labels = []
+        k=0
+        comb = itertools.combinations(range(X.shape[0]), 2)
+        for (i,j) in comb:
+            if (y[i]==y[j]) or (groups[i]!=groups[j]):
+                continue
+            data.append(X[i]-X[j])
+            labels.append(np.sign(y[i]-y[j]))
+            if labels[-1] != (-1) ** k:
+                labels[-1] *= -1
+                data[-1] *= -1
+            k += 1
+        return data,labels
 
 
     def create_data_set_svm_rank(self,feature_index_query,labels_index):
@@ -51,7 +74,7 @@ class preprocess:
         labels = []
         for qid in feature_index_query:
             print "working on ",qid
-            comb = list(itertools.combinations(range(len(feature_index_query[qid])), 2))
+            comb = itertools.combinations(range(len(feature_index_query[qid])), 2)
             for (i,j) in comb:
                 if labels_index[qid][i]==labels_index[qid][j]:
                     continue

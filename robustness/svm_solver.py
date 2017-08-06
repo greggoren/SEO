@@ -24,6 +24,7 @@ class SVM(object):
 
     def fit(self, X, y):
         n_samples, n_features = len(X),len(X[0])
+        print n_samples,n_features
         # Gram matrix
         K = np.zeros((n_samples, n_samples))
         for i in range(n_samples):
