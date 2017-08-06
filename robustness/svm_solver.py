@@ -4,6 +4,8 @@ import cvxopt
 import cvxopt.solvers
 from scipy.sparse import diags
 from scipy.sparse import vstack
+from scipy.sparse import csr_matrix
+from scipy.sparse import lil_matrix
 
 def linear_kernel(x1, x2):
     return np.dot(x1, x2)
@@ -27,14 +29,16 @@ class SVM(object):
         n_samples, n_features = X.shape
         print n_samples,n_features
         # Gram matrix
-        """K = np.zeros((n_samples, n_samples))
+        K = lil_matrix((n_samples, n_samples),dtype=float)
         for i in range(n_samples):
-            for j in range(i,n_samples):
-                K[i, j] = self.kernel(X[i], X[j])"""
-        K = y[:] * X
+            for j in range(n_samples):
+                K[i, j] = self.kernel(X[i], X[j])
+        K = csr_matrix(K)
+        #K = y[:] * X
 
-        K = np.dot(K, K.T)
-        P = cvxopt.matrix(K)
+        #K = np.dot(K, K.T)
+        #P = cvxopt.matrix(K)
+        P = cvxopt.matrix(np.outer(y, y) * K)
         q = cvxopt.matrix(np.ones(n_samples) * -1)
         A = cvxopt.matrix(y, (1, n_samples))
         print A
