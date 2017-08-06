@@ -29,6 +29,7 @@ class SVM(object):
         n_samples, n_features = X.shape
         print n_samples,n_features
         # Gram matrix
+        print "creating gram matrix"
         K = lil_matrix((n_samples, n_samples),dtype=float)
         for i in range(n_samples):
             for j in range(n_samples):
@@ -39,11 +40,12 @@ class SVM(object):
         #K = np.dot(K, K.T)
         #P = cvxopt.matrix(K)
         P = cvxopt.matrix(np.outer(y, y) * K)
+        print "gram matrix creation completed"
         q = cvxopt.matrix(np.ones(n_samples) * -1)
         A = cvxopt.matrix(y, (1, n_samples))
         print A
         b = cvxopt.matrix(0.0)
-
+        print "finished basic matrices"
         if self.C is None:
             G = cvxopt.matrix(np.diag(np.ones(n_samples) * -1))
             h = cvxopt.matrix(np.zeros(n_samples))
@@ -55,10 +57,10 @@ class SVM(object):
             tmp1 = np.zeros(n_samples)
             tmp2 = np.ones(n_samples) * self.C
             h = cvxopt.matrix(np.hstack((tmp1, tmp2)))
-
+        print "finished all matrix creation, starting solver"
         # solve QP problem
         solution = cvxopt.solvers.qp(P, q, G, h, A, b)
-
+        print "solver finished model is ready"
         # Lagrange multipliers
         a = np.ravel(solution['x'])
 
