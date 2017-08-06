@@ -1,7 +1,7 @@
 import competition_stats_handler as csh
 import os
 import subprocess
-import model_running.cross_validator as cv
+from model_running import  cross_validator as cv
 from model_running import evaluator as ev
 import sys
 #aaaaZ

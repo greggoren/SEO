@@ -6,12 +6,12 @@ class all_above_stat_handler_lbda(lfh.lambda_mart_stats_handler):
         self.max_distance = max_distance
         self.cross_validator = cross_validator
 
-    def create_vector_from_above_competitors(self,competitors,document_features,number_of_competitors):
+    def create_vector_from_above_competitors(self,competitors,document_features,number_of_competitors,alpha):
 
         print "getting reference vectors"
         chosen_vectors={}
         opt = True
-        cache_list_of_weights=self.initilize_cache_of_normaliztion(number_of_competitors)
+        cache_list_of_weights=self.initilize_cache_of_normaliztion(number_of_competitors,alpha)
         for query in document_features:
             chosen_vectors[query]={}
             competitors_list = competitors[query]
@@ -38,7 +38,7 @@ class all_above_stat_handler_lbda(lfh.lambda_mart_stats_handler):
         return chosen_vectors
 
 
-    def initilize_cache_of_normaliztion(self,number_of_competitors,alpha=60):
+    def initilize_cache_of_normaliztion(self,number_of_competitors,alpha):
         cache_list_of_weights = {}
         for index in range(1, number_of_competitors):
             list_of_index = list((range(1, index)))
@@ -57,8 +57,8 @@ class all_above_stat_handler_lbda(lfh.lambda_mart_stats_handler):
             cache_list_of_weights[index]=result
         return cache_list_of_weights
 
-    def create_items_for_knapsack(self,competitors,features_index,number_of_competitors):
+    def create_items_for_knapsack(self,competitors,features_index,number_of_competitors,alpha=60):
         print "creating items for bag"
-        value_for_change = self.create_vector_from_above_competitors(competitors,features_index,number_of_competitors)
+        value_for_change = self.create_vector_from_above_competitors(competitors,features_index,number_of_competitors,alpha)
         print "items creation ended"
         return value_for_change

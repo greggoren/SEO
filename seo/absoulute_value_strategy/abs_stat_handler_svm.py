@@ -1,6 +1,6 @@
-import competition_stats_handler as csh
+from seo import competition_stats_handler as csh
 
-class all_above_stat_handler(csh.competition_stats_handler):
+class abs_stat_handler_svm(csh.competition_stats_handler):
     def __init__(self,model,max_distance):
         self.model = model
         self.max_distance = max_distance
@@ -10,12 +10,12 @@ class all_above_stat_handler(csh.competition_stats_handler):
         ""
 
 
-    def create_vector_from_above_competitors(self,competitors,document_features,number_of_competitors,alpha):
+    def create_vector_from_above_competitors(self,competitors,document_features,number_of_competitors):
 
         print "getting reference vectors"
         chosen_vectors={}
         opt = True
-        cache_list_of_weights=self.initilize_cache_of_normaliztion(number_of_competitors,alpha)
+        cache_list_of_weights=self.initilize_cache_of_normaliztion(number_of_competitors)
         for query in document_features:
             chosen_vectors[query]={}
             competitors_list = competitors[query]
@@ -41,7 +41,7 @@ class all_above_stat_handler(csh.competition_stats_handler):
         return chosen_vectors
 
 
-    def initilize_cache_of_normaliztion(self,number_of_competitors,alpha):
+    def initilize_cache_of_normaliztion(self,number_of_competitors,alpha=60):
         cache_list_of_weights = {}
         for index in range(1, number_of_competitors):
             list_of_index = list((range(1, index)))
@@ -60,8 +60,17 @@ class all_above_stat_handler(csh.competition_stats_handler):
             cache_list_of_weights[index]=result
         return cache_list_of_weights
 
-    def create_items_for_knapsack(self,competitors,features_index,number_of_competitors,alpha=60):
+    def create_items_for_knapsack(self,competitors,features_index,number_of_competitors):
         print "creating items for bag"
-        value_for_change = self.create_vector_from_above_competitors(competitors,features_index,number_of_competitors,alpha)
+        indexes_for_change = {}
+        value_for_change = {}
+        for query in competitors:
+            reference_vector = features_index[query][competitors[query][0]]
+            value_for_change[query]=reference_vector
+            indexes_for_change[query]={}
+            for document in competitors[query]:
+                changed_vector = [(abs(a-b),features_index[query][document].index(a)) for a,b in zip(features_index[query][document],reference_vector)]
+                sorted_changed_vector =sorted(changed_vector,key=lambda x:x[0],reverse=True)[:50]
+                indexes_for_change[query][document] = [a[1] for a in sorted_changed_vector]
         print "items creation ended"
-        return value_for_change
+        return indexes_for_change,value_for_change

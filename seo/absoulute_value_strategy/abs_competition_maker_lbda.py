@@ -1,7 +1,7 @@
-import random_kanpsack as ka
+import abs_kanpsack_algorithm as ka
 from copy import deepcopy
 from scipy.stats import kendalltau as kt
-import lambdamart_file_handler as gbcc
+import abs_stat_handler_lbda as gbcc
 import math
 import cPickle as cp
 import random
@@ -23,19 +23,18 @@ class competition_maker:
         self.new_scores_path = new_scores_path
         self.models_path = models_path
 
-    def get_features_to_change(self,competitors,items,values_for_change,competitor_features,original_features):
+    def get_features_to_change(self,competitors,index_for_change,values_for_change,competitor_features,original_features):
         features_to_change = {}
         denominator = 0
         sum_of_number_of_features = 0
         for query in competitors:
             features_to_change[query] = {}
-
+            reference_vec = values_for_change[query]
             for competitor in competitors[query]:
-                reference_vec = values_for_change[query][competitor]
+
                 current_features = competitor_features[query][competitor]
                 original_competitor = original_features[query][competitor]
-                #items = cost_index[query][competitor]
-                packer = ka.random_knapsack(items, self.lambdamart_file_handler.max_distance)
+                packer = ka.abs_knapsack(index_for_change[query][competitor], self.lambdamart_file_handler.max_distance)
                 features =[feature[0] for feature in packer.pack(original_competitor,current_features,reference_vec)]
                 features_to_change[query][competitor] = features
                 sum_of_number_of_features+=len(features)
@@ -52,11 +51,10 @@ class competition_maker:
                 for index in range(length):
                     if features_to_change.get(query, False):
                         if index in features_to_change[query][doc]:
-                            competitors_features[query][doc][index]=value_for_change[query][doc][index]
+                            competitors_features[query][doc][index]=value_for_change[query][index]
         return competitors_features
 
-    def competition(self,final_scores_directory,relevance_index,alpha=60):
-        items_holder = {}
+    def competition(self,final_scores_directory,relevance_index):
         sys.stdout.flush()
         results = {}
         competitors = self.lambdamart_file_handler.get_competitors_for_query(self.score_file, self.number_of_competitors)
@@ -82,14 +80,11 @@ class competition_maker:
             print "iteration number ",iteration+1
             sum_of_kendalltau = 0
             average_distance = self.lambdamart_file_handler.create_budget_per_query(self.fraction, document_feature_index)
-            value_for_change = self.lambdamart_file_handler.create_items_for_knapsack(competitors, document_feature_index,self.number_of_competitors,alpha)
+            index_for_change,value_for_change = self.lambdamart_file_handler.create_items_for_knapsack(competitors,document_feature_index,self.number_of_competitors)
             print "getting features to change"
             sys.stdout.flush()
-            items = range(136)#TODO: make more generic
-            random.shuffle(items)
-            items = items[:50]
-            items_holder[iteration] = items
-            features_to_change ,avg_feature_num= self.get_features_to_change(competitors,items,value_for_change,document_feature_index,original_vectors)
+
+            features_to_change ,avg_feature_num= self.get_features_to_change(competitors,index_for_change,value_for_change,document_feature_index,original_vectors)
             print "got features to change"
             average_feature_number.append(avg_feature_num)
             print "updating competitors"
@@ -165,9 +160,7 @@ class competition_maker:
         results["decOrAsc"]["dec"] = decreased_relevance
         meta_results = {}
         meta_results[self.lambdamart_file_handler.model] = results
-        meta_item_holder = {}
-        meta_item_holder[self.lambdamart_file_handler.model] = items_holder
-        return meta_results,meta_item_holder
+        return meta_results
 
 
     def get_new_rankings(self,document_features,query_per_fold,final_scores_directory):

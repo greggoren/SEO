@@ -57,7 +57,7 @@ def create_hist_graph(main_folder):
             create_histograms(results, hist[0], "results/"+sub_folder, hist[1])
 
 def run_on_folders(main_folder):
-    plot_names = [("avg_f","Feature Changed","Average Number Of Features Changed"),("cos","Average Cosine Distance","Average Diameter Of Competitors"),("kendall","Kendall Tau Measure","Average Kendall-Tau With Last Iteration"),("orig","Kendall Tau","Average Kendall-Tau With Original List"),("winner","Change Rate","Winner Change Frequency")]
+    plot_names = [("avg_f","Feature Changed","Average Number Of Features Changed"),("cos","Average Cosine Distance","Average Cosine Distance Of Competitors"),("kendall","Kendall Tau Measure","Average Kendall-Tau With Last Iteration"),("orig","Kendall Tau","Average Kendall-Tau With Original List"),("winner","Change Rate","Winner Change Frequency")]
     sub_folders = ["01","001","005"]
     for sub_folder in sub_folders:
         for plot_name in plot_names:
@@ -72,7 +72,7 @@ def run_on_folders(main_folder):
 
 def create_combined_graphs(main_folder):
     plot_names = [("avg_f", "Feature Changed", "Average Number Of Features Changed"),
-                  ("cos", "Average Cosine Distance", "Average Diameter Of Competitors"),
+                  ("cos", "Average Cosine Distance", "Average Cosine Distance Of Competitors"),
                   ("kendall", "Kendall Tau Measure", "Average Kendall-Tau With Last Iteration"),
                   ("orig", "Kendall Tau", "Average Kendall-Tau With Original List"),
                   ("winner", "Change Rate", "Winner Change Frequency")]
@@ -95,8 +95,9 @@ def create_combined_graphs(main_folder):
             plt.xlabel("Iterations")
             svm_res = results["SVM"]
             lbda_res = results["LAMBDA"]
-            plt.plot(svm_res[0], svm_res[1], "g")
-            plt.plot(lbda_res[0], lbda_res[1], "b")
+            plt.plot(svm_res[0], svm_res[1], "g",label="SVMRank")
+            plt.plot(lbda_res[0], lbda_res[1], "b",label="LambdaMart")
+            plt.legend(loc="best")
             i += 1
         plt.savefig(main_folder + "/" + plot_name[0].replace(" ", "") + ".jpg")
         plt.clf()
@@ -104,15 +105,12 @@ def create_combined_graphs(main_folder):
 def create_histograms(results,label,location,title):
     plt.figure(1)
     plt.title(title)
-
     plt.subplot(221)
-
     plt.title("SVM_RANK")
     plt.bar(results["SVM"][0], results["SVM"][1], align="center")
     plt.subplot(222)
     plt.title("LAMBDA_MART")
     plt.bar(results["LAMBDA"][0], results["LAMBDA"][1], align="center")
-
     plt.savefig(location + "/"+label+".jpg")
     plt.clf()
 
@@ -160,9 +158,10 @@ def create_combined_histograms(main_folder):
             file_lbda = main_folder + "/LAMDAMART/" + sub_folder + "/" + hist[0] + ".txt"
             results["LAMBDA"] = (parse_file_hist(file_lbda))
             plt.subplot(220+i)
-            plt.bar(results["SVM"][0], results["SVM"][1],width=0.3, align="center",color='g')
+            plt.bar(results["SVM"][0], results["SVM"][1],width=0.3, align="center",color='g',label="SVMRank")
             t = [a -0.3 for a in results["LAMBDA"][0]]
-            plt.bar(t, results["LAMBDA"][1], width=0.3, align="center", color='b')
+            plt.bar(t, results["LAMBDA"][1], width=0.3, align="center", color='b',label="LambdaMart")
+            plt.legend(loc='best')
             plt.ylabel("Number Of Queries")
             if hist[1].__contains__("Rel"):
                 plt.xlabel("Relevance")
@@ -173,6 +172,9 @@ def create_combined_histograms(main_folder):
         plt.clf()
 
 if __name__=="__main__":
+    main_folder = "C:/study/res/svmlist"
+    create_combined_graphs(main_folder)
+    create_combined_histograms(main_folder)
     main_folder = "C:/study/res/lbdalist"
     create_combined_graphs(main_folder)
     create_combined_histograms(main_folder)

@@ -1,7 +1,7 @@
-import random_kanpsack as ka
+import abs_kanpsack_algorithm as ka
 from copy import deepcopy
 from scipy.stats import kendalltau as kt
-import lambdamart_file_handler as gbcc
+import abs_stat_handler_svm as gbcc
 import math
 import cPickle as cp
 import random
@@ -11,7 +11,7 @@ class competition_maker:
 
     def __init__(self,num_of_iterations,budget_creator,score_file,number_of_competitors,data_set_location,fraction,chosen_models,query_per_fold):
         self.num_of_iterations = num_of_iterations
-        self.lambdamart_file_handler = budget_creator
+        self.abs_stat_handler_svm = budget_creator
         self.score_file = score_file
         self.number_of_competitors = number_of_competitors
         self.data_set_location = data_set_location
@@ -20,18 +20,18 @@ class competition_maker:
         self.query_per_fold = query_per_fold
 
 
-    def get_features_to_change(self,competitors,items,values_for_change,competitor_features,original_features):
+    def get_features_to_change(self,competitors,index_for_change,values_for_change,competitor_features,original_features):
         features_to_change = {}
         denominator = 0
         sum_of_number_of_features = 0
         for query in competitors:
             features_to_change[query] = {}
-
+            reference_vec = values_for_change[query]
             for competitor in competitors[query]:
-                reference_vec = values_for_change[query][competitor]
+
                 current_features = competitor_features[query][competitor]
                 original_competitor = original_features[query][competitor]
-                packer = ka.random_knapsack(items, self.lambdamart_file_handler.max_distance)
+                packer = ka.abs_knapsack(index_for_change[query][competitor], self.abs_stat_handler_svm.max_distance)
                 features =[feature[0] for feature in packer.pack(original_competitor,current_features,reference_vec)]
                 features_to_change[query][competitor] = features
                 sum_of_number_of_features+=len(features)
@@ -48,17 +48,16 @@ class competition_maker:
                 for index in range(length):
                     if features_to_change.get(query, False):
                         if index in features_to_change[query][doc]:
-                            competitors_features[query][doc][index]=value_for_change[query][doc][index]
+                            competitors_features[query][doc][index]=value_for_change[query][index]
         return competitors_features
 
-    def competition(self,items_holder,relevance_index,alpha=60):
+    def competition(self,relevance_index):
         results = {}
-        competitors = self.lambdamart_file_handler.get_competitors_for_query(self.score_file, self.number_of_competitors)
+        competitors = self.abs_stat_handler_svm.get_competitors_for_query(self.score_file, self.number_of_competitors)
         reference_of_indexes = cp.loads(cp.dumps(competitors, 1))
-        document_feature_index = self.lambdamart_file_handler.index_features_for_competitors(competitors, self.data_set_location,
-                                                                                    True)
+        document_feature_index = self.abs_stat_handler_svm.index_features_for_competitors(competitors, self.data_set_location, True)
         original_vectors = cp.loads(cp.dumps(document_feature_index, -1))
-        model_weights_per_fold_index = self.lambdamart_file_handler.get_chosen_model_weights_for_fold(self.chosen_models)
+        model_weights_per_fold_index = self.abs_stat_handler_svm.get_chosen_model_weights_for_fold(self.chosen_models)
         x_axis = []
         y_axis = []
         changed_winner_averages = []
@@ -76,11 +75,10 @@ class competition_maker:
 
             print "iteration number ", iteration + 1
             sum_of_kendalltau = 0
-            average_distance = self.lambdamart_file_handler.create_budget_per_query(self.fraction, document_feature_index)
-            value_for_change = self.lambdamart_file_handler.create_items_for_knapsack(competitors, document_feature_index,self.number_of_competitors,alpha)
+            average_distance = self.abs_stat_handler_svm.create_budget_per_query(self.fraction, document_feature_index)
+            index_for_change,value_for_change = self.abs_stat_handler_svm.create_items_for_knapsack(competitors, document_feature_index, self.number_of_competitors)
             print "getting features to change"
-            items = items_holder[iteration]
-            features_to_change, avg_feature_num = self.get_features_to_change(competitors, items, value_for_change,
+            features_to_change, avg_feature_num = self.get_features_to_change(competitors, index_for_change,value_for_change,
                                                                               document_feature_index, original_vectors)
 
             print "got features to change"
@@ -142,7 +140,7 @@ class competition_maker:
             y_axis.append(average)
             original_reference.append(float(sum_of_original_kt) / denominator)
             competitors = cp.loads(cp.dumps(competitors_new, -1))
-        print self.lambdamart_file_handler.model," SVM stats:"
+        print self.abs_stat_handler_svm.model, " SVM stats:"
         print "Number Of queries that improved winner relevance: ",improved_relevance
         print "Number of queries that decreased winner relevance: ",decreased_relevance
         sys.stdout.flush()
@@ -160,7 +158,7 @@ class competition_maker:
         results["decOrAsc"]["inc"] = improved_relevance
         results["decOrAsc"]["dec"] = decreased_relevance
         meta_results = {}
-        meta_results[self.lambdamart_file_handler.model] = results
+        meta_results[self.abs_stat_handler_svm.model] = results
         return meta_results
 
 
