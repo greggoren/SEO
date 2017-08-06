@@ -3,6 +3,7 @@ from numpy import linalg
 import cvxopt
 import cvxopt.solvers
 from scipy.sparse import diags
+from scipy.sparse import vstack
 
 def linear_kernel(x1, x2):
     return np.dot(x1, x2)
@@ -45,7 +46,7 @@ class SVM(object):
         else:
             tmp1 = diags(np.ones(n_samples) * -1)
             tmp2 = diags(np.ones(n_samples))
-            G = cvxopt.matrix(np.vstack((tmp1, tmp2)))
+            G = cvxopt.matrix(vstack((tmp1, tmp2)))
             tmp1 = np.zeros(n_samples)
             tmp2 = np.ones(n_samples) * self.C
             h = cvxopt.matrix(np.hstack((tmp1, tmp2)))
