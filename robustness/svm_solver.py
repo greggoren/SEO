@@ -23,7 +23,7 @@ class SVM(object):
         if self.C is not None: self.C = float(self.C)
 
     def fit(self, X, y):
-        n_samples, n_features = len(X),len(X[0])
+        n_samples, n_features = X.shape
         print n_samples,n_features
         # Gram matrix
         """K = np.zeros((n_samples, n_samples))
@@ -33,7 +33,7 @@ class SVM(object):
         K = y[:] * X
 
         K = np.dot(K, K.T)
-        P = cvxopt.matrix(np.outer(y, y) * K)
+        P = cvxopt.matrix(K)
         q = cvxopt.matrix(np.ones(n_samples) * -1)
         A = cvxopt.matrix(y, (1, n_samples))
         print A
