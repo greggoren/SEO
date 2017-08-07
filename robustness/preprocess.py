@@ -100,11 +100,13 @@ class preprocess:
                     transitivity_smaller[qid][i].add(j)
                     transitivity_bigger[qid][j].add(i)
                     if self.check_transitivity(transitivity_bigger[qid][j],transitivity_smaller[qid][i]):
+                        print "did it"
                         continue
                 else:
                     transitivity_smaller[qid][j].add(i)
                     transitivity_bigger[qid][i].add(j)
                     if self.check_transitivity(transitivity_bigger[qid][i],transitivity_smaller[qid][j]):
+                        print "did it"
                         continue
 
                 data_set.append(feature_index_query[qid][i]-feature_index_query[qid][j])
