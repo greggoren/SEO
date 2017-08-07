@@ -36,9 +36,9 @@ class SVM(object):
                 K[i, j] = self.kernel(X[i], X[j])
         K = csr_matrix(K)"""
         K = y[:,None] * X
-
-        K = np.dot(K, K.T)
-        P = cvxopt.matrix(K)
+        K = csr_matrix(K)
+        K = K* K.transpose()
+        P = cvxopt.spmatrix(K.data,K.row.tolist(),K.col.tolist())
         #P = cvxopt.matrix(np.outer(y, y) * K)
         print "gram matrix creation completed"
         q = cvxopt.matrix(np.ones(n_samples) * -1)
