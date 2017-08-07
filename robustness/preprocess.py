@@ -55,7 +55,7 @@ class preprocess:
 
     def create_data_set(self,X,y,groups):
         print "creating data set"
-        X=X.todense()
+        X=X.toarray()
         #y=np.array(y)
         data = []
         labels = []
@@ -64,7 +64,6 @@ class preprocess:
         for group in unique_groups:
             print "working on query ",group
             relevat_indexes = np.where(groups==group)[0]
-            print "finished index retrieval"
             comb = list(itertools.combinations(relevat_indexes, 2))
             for (i,j) in comb:
                 if (y[i]==y[j]):
@@ -75,7 +74,8 @@ class preprocess:
                     labels[-1] *= -1
                     data[-1] *= -1
                 k += 1
-        print len(data)
+        print "finished data set creation"
+        print "number of points",len(data)
         return data,labels
 
 
