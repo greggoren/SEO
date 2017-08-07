@@ -4,7 +4,7 @@ import preprocess as p
 from sklearn.decomposition import PCA
 
 if __name__=="__main__":
-    data_set_location = "../../../svm_test/a/features"
+    data_set_location = "../../../svm_test/a/test.txt"
     """prep = p.preprocess(data_set_location)
     a,b=prep.index_features_for_competitors(True)
     X,y = prep.create_data_set_svm_rank(a,b)"""
