@@ -72,13 +72,36 @@ class preprocess:
         k=0
         data_set=[]
         labels = []
+        transitivity_bigger ={}
+        transitivity_smaller={}
         for qid in feature_index_query:
+            if not transitivity_bigger.get(qid,False):
+                transitivity_bigger[qid]={}
+            if not transitivity_smaller.get(qid,False):
+                transitivity_smaller[qid]={}
             print "working on ",qid
             comb = itertools.combinations(range(len(feature_index_query[qid])), 2)
             for (i,j) in comb:
+                if not transitivity_bigger.get(i,False):
+                    transitivity_smaller, transitivity_bigger=self.initialize_edges(transitivity_smaller,transitivity_bigger,i,qid)
+                if not transitivity_bigger.get(j,False):
+                    transitivity_smaller, transitivity_bigger = self.initialize_edges(transitivity_smaller,
+                                                                                      transitivity_bigger, j, qid)
                 if labels_index[qid][i]==labels_index[qid][j]:
                     continue
+                sign  = np.sign(labels_index[qid][i]-labels_index[qid][j])
+                if sign == -1:
+                    transitivity_smaller[qid][i].add(j)
+                    transitivity_bigger[qid][j].add(i)
+                    if self.check_transitivity(transitivity_bigger[qid][j],transitivity_smaller[qid][i]):
+                        continue
+                else:
+                    transitivity_smaller[qid][j].add(i)
+                    transitivity_bigger[qid][i].add(j)
+                    if self.check_transitivity(transitivity_bigger[qid][i],transitivity_smaller[qid][j]):
+                        continue
                 data_set.append(feature_index_query[qid][i]-feature_index_query[qid][j])
+
                 labels.append(np.sign(labels_index[qid][i]-labels_index[qid][j]))
                 if labels[-1]!= (-1) ** k:
                     labels[-1]*=-1
@@ -88,4 +111,15 @@ class preprocess:
         del(feature_index_query)
         return data_set,labels
 
+    def initialize_edges(self,smaller,bigger,i,qid):
+        smaller[qid][i]=set()
+        bigger[qid][i]=set()
+        return smaller,bigger
+
+
+
+    def check_transitivity(self,bigger_set,smaller_set):
+        if smaller_set.intersection(bigger_set):
+            return True
+        return False
 
