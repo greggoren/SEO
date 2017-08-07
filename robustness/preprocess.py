@@ -19,6 +19,7 @@ class preprocess:
         if (normalized):
             amount = 1
         label_index =0
+        line=1
         for dirs in os.walk(self.data_set_location):
             if dirs[1]:
                 first_directory = dirs[0]+"/"+dirs[1][0]
@@ -27,7 +28,9 @@ class preprocess:
                         current_file = files[0]+"/"+file_name
                         with open(current_file) as features:
                             for feature in features:
-
+                                if line>=1000:
+                                    break
+                                line+=1
                                 feature_data = feature.split()
                                 qid = feature_data[1]
                                 if not feature_index_query.get(qid,False):
@@ -82,9 +85,9 @@ class preprocess:
             print "working on ",qid
             comb = itertools.combinations(range(len(feature_index_query[qid])), 2)
             for (i,j) in comb:
-                if not transitivity_bigger.get(i,False):
+                if not transitivity_bigger[qid].get(i,False):
                     transitivity_smaller, transitivity_bigger=self.initialize_edges(transitivity_smaller,transitivity_bigger,i,qid)
-                if not transitivity_bigger.get(j,False):
+                if not transitivity_bigger[qid].get(j,False):
                     transitivity_smaller, transitivity_bigger = self.initialize_edges(transitivity_smaller,
                                                                                       transitivity_bigger, j, qid)
                 if labels_index[qid][i]==labels_index[qid][j]:
