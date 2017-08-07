@@ -55,19 +55,27 @@ class preprocess:
 
     def create_data_set(self,X,y,groups):
         print "creating data set"
+        X=X.todense()
+        #y=np.array(y)
         data = []
         labels = []
         k=0
-        comb = list(itertools.combinations(range(X.shape[0]), 2))
-        for (i,j) in comb:
-            if (y[i]==y[j]) or (groups[i]!=groups[j]):
-                continue
-            data.append(X[i]-X[j])
-            labels.append(np.sign(y[i]-y[j]))
-            if labels[-1] != (-1) ** k:
-                labels[-1] *= -1
-                data[-1] *= -1
-            k += 1
+        unique_groups = set(groups)
+        for group in unique_groups:
+            print "working on query ",group
+            relevat_indexes = np.where(groups==group)[0]
+            print "finished index retrieval"
+            comb = list(itertools.combinations(relevat_indexes, 2))
+            for (i,j) in comb:
+                if (y[i]==y[j]):
+                    continue
+                data.append(X[i]-X[j])
+                labels.append(np.sign(y[i]-y[j]))
+                if labels[-1] != (-1) ** k:
+                    labels[-1] *= -1
+                    data[-1] *= -1
+                k += 1
+        print len(data)
         return data,labels
 
 
@@ -120,9 +128,9 @@ class preprocess:
 
         return data_set,labels
 
-    def initialize_edges(self,smaller,bigger,i,qid):
-        smaller[qid][i]=set()
-        bigger[qid][i]=set()
+    def initialize_edges(self,smaller,bigger,k,qids):
+        smaller[qids][k]=set()
+        bigger[qids][k]=set()
         return smaller,bigger
 
 
