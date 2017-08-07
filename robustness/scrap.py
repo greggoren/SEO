@@ -13,8 +13,8 @@ if __name__=="__main__":
     X,y = prep.create_data_set(a,b,c)"""
     svm = ss.SVM(C=0.1)
     matrix =np.matrix(X,copy=False)
-    """pca = PCA(n_components=5,copy=False,svd_solver='arpack')
+    pca = PCA(n_components=2,copy=False,svd_solver='arpack')
     reduced = pca.fit_transform(matrix)
-    print pca.explained_variance_ratio_"""
-    svm.fit(matrix,np.array(y))
+    print pca.explained_variance_ratio_
+    svm.fit(reduced,np.array(y))
 
