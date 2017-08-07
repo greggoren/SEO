@@ -19,7 +19,7 @@ class preprocess:
         if (normalized):
             amount = 1
         label_index =0
-        line=1
+        #line=1
         for dirs in os.walk(self.data_set_location):
             if dirs[1]:
                 first_directory = dirs[0]+"/"+dirs[1][0]
@@ -28,9 +28,9 @@ class preprocess:
                         current_file = files[0]+"/"+file_name
                         with open(current_file) as features:
                             for feature in features:
-                                if line>=1000:
+                                """if line>=1000:
                                     break
-                                line+=1
+                                line+=1"""
                                 feature_data = feature.split()
                                 qid = feature_data[1]
                                 if not feature_index_query.get(qid,False):
