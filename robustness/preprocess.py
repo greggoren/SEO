@@ -128,7 +128,7 @@ class preprocess:
 
     def check_transitivity(self,bigger_set,smaller_set):
         a = smaller_set.intersection(bigger_set)
-        if len(a)==0:
+        if len(a)!=0:
             return True
         return False
 
