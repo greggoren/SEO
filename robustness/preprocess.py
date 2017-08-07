@@ -85,9 +85,11 @@ class preprocess:
             print "working on ",qid
             comb = itertools.combinations(range(len(feature_index_query[qid])), 2)
             for (i,j) in comb:
-                if not transitivity_bigger[qid].get(i,False):
+                if i == 15:
+                    print ""
+                if transitivity_bigger[qid].get(i,None) is None :
                     transitivity_smaller, transitivity_bigger=self.initialize_edges(transitivity_smaller,transitivity_bigger,i,qid)
-                if not transitivity_bigger[qid].get(j,False):
+                if transitivity_bigger[qid].get(j,None) is None:
                     transitivity_smaller, transitivity_bigger = self.initialize_edges(transitivity_smaller,
                                                                                       transitivity_bigger, j, qid)
                 if labels_index[qid][i]==labels_index[qid][j]:
