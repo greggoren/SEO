@@ -14,11 +14,12 @@ class preprocess:
     def index_features_for_competitors(self,normalized):
         feature_index_query = {}
         labels_index = {}
+
         print "features index creation started"
         amount = 0
         if (normalized):
             amount = 1
-        label_index =0
+        label_index ={}
         #line=1
         for dirs in os.walk(self.data_set_location):
             if dirs[1]:
@@ -35,15 +36,15 @@ class preprocess:
                                 qid = feature_data[1]
                                 if not feature_index_query.get(qid,False):
                                     feature_index_query[qid]=[]
-                                    label_index = 0
+                                    label_index[qid]=0
                                     labels_index[qid]={}
                                 features_length = len(feature_data)
                                 features_vec = []
                                 for index in range(2, features_length - 1 - amount):
                                     data = feature_data[index]
                                     features_vec.append(float(data.split(":")[1]))
-                                labels_index[qid][label_index]=int(feature_data[0])
-                                label_index+=1
+                                labels_index[qid][label_index[qid]]=int(feature_data[0])
+                                label_index[qid] = label_index[qid]+1
                                 feature_index_query[qid].append(np.array(features_vec))
             print "feature index creation ended"
             return feature_index_query,labels_index
