@@ -30,16 +30,16 @@ class SVM(object):
         print n_samples,n_features
         # Gram matrix
         print "creating gram matrix"
-        K = lil_matrix((n_samples, n_samples),dtype=float)
+        """K = lil_matrix((n_samples, n_samples),dtype=float)
         for i in range(n_samples):
             for j in range(n_samples):
                 K[i, j] = self.kernel(X[i], X[j])
-        K = csr_matrix(K)
-        #K = y[:] * X
+        K = csr_matrix(K)"""
+        K = y[:,None] * X
 
-        #K = np.dot(K, K.T)
-        #P = cvxopt.matrix(K)
-        P = cvxopt.matrix(np.outer(y, y) * K)
+        K = np.dot(K, K.T)
+        P = cvxopt.matrix(K)
+        #P = cvxopt.matrix(np.outer(y, y) * K)
         print "gram matrix creation completed"
         q = cvxopt.matrix(np.ones(n_samples) * -1)
         A = cvxopt.matrix(y, (1, n_samples))
