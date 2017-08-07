@@ -85,8 +85,7 @@ class preprocess:
             print "working on ",qid
             comb = itertools.combinations(range(len(feature_index_query[qid])), 2)
             for (i,j) in comb:
-                if i == 15:
-                    print ""
+
                 if transitivity_bigger[qid].get(i,None) is None :
                     transitivity_smaller, transitivity_bigger=self.initialize_edges(transitivity_smaller,transitivity_bigger,i,qid)
                 if transitivity_bigger[qid].get(j,None) is None:
@@ -94,7 +93,9 @@ class preprocess:
                                                                                       transitivity_bigger, j, qid)
                 if labels_index[qid][i]==labels_index[qid][j]:
                     continue
+
                 sign  = np.sign(labels_index[qid][i]-labels_index[qid][j])
+
                 if sign == -1:
                     transitivity_smaller[qid][i].add(j)
                     transitivity_bigger[qid][j].add(i)
@@ -105,15 +106,17 @@ class preprocess:
                     transitivity_bigger[qid][i].add(j)
                     if self.check_transitivity(transitivity_bigger[qid][i],transitivity_smaller[qid][j]):
                         continue
-                data_set.append(feature_index_query[qid][i]-feature_index_query[qid][j])
 
-                labels.append(np.sign(labels_index[qid][i]-labels_index[qid][j]))
+                data_set.append(feature_index_query[qid][i]-feature_index_query[qid][j])
+                labels.append(sign)
                 if labels[-1]!= (-1) ** k:
                     labels[-1]*=-1
                     data_set[-1]*=-1
                 k+=1
+        print len(labels)
         print "data set creation ended"
         del(feature_index_query)
+
         return data_set,labels
 
     def initialize_edges(self,smaller,bigger,i,qid):
